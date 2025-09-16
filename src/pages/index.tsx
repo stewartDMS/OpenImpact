@@ -1,26 +1,5 @@
 import { Box, Container, Typography, Button, Grid, Paper, Stack } from "@mui/material";
-import EcoIcon from "@mui/icons-material/Eco";
-import PublicIcon from "@mui/icons-material/Public";
-import InsightsIcon from "@mui/icons-material/Insights";
 import { useState } from "react";
-
-const features = [
-  {
-    icon: <EcoIcon color="success" sx={{ fontSize: 40 }} />, 
-    title: "Sustainable Data",
-    desc: "Curate and share impactful environmental and social datasets.",
-  },
-  {
-    icon: <PublicIcon color="primary" sx={{ fontSize: 40 }} />, 
-    title: "Open Collaboration",
-    desc: "Work openly, collaborate globally for better outcomes.",
-  },
-  {
-    icon: <InsightsIcon color="secondary" sx={{ fontSize: 40 }} />, 
-    title: "Powerful Insights",
-    desc: "Generate and visualize insights to drive positive change.",
-  },
-];
 
 export default function Home() {
   const [username, setUsername] = useState("");
@@ -54,6 +33,9 @@ export default function Home() {
           <Typography variant="h2" fontWeight={800} gutterBottom>
             Open Impact
           </Typography>
+          <Typography variant="h6" color="inherit" sx={{ mb: 2, fontWeight: 600 }}>
+            OpenImpact is running on Next.js!
+          </Typography>
           <Typography variant="h5" color="inherit" sx={{ mb: 4 }}>
             An open-source platform to explore, analyze, and share social and environmental impact data.
           </Typography>
@@ -77,30 +59,63 @@ export default function Home() {
         </Container>
       </Box>
 
-      {/* Features Section */}
+      {/* Features Section - Simplified without icons */}
       <Container sx={{ py: { xs: 6, md: 10 } }}>
         <Typography variant="h4" align="center" fontWeight={700} gutterBottom>
           Why Open Impact?
         </Typography>
         <Grid container spacing={4} justifyContent="center">
-          {features.map((f, i) => (
-            <Grid item xs={12} md={4} key={i}>
-              <Paper elevation={4} sx={{
-                p: 4,
-                textAlign: "center",
-                borderRadius: 4,
-                height: "100%",
-                transition: "transform 0.2s",
-                "&:hover": { transform: "translateY(-8px)", boxShadow: 8 }
-              }}>
-                <Box mb={2}>{f.icon}</Box>
-                <Typography variant="h6" fontWeight={700} mb={1}>
-                  {f.title}
-                </Typography>
-                <Typography color="text.secondary">{f.desc}</Typography>
-              </Paper>
-            </Grid>
-          ))}
+          <Grid item xs={12} md={4}>
+            <Paper elevation={4} sx={{
+              p: 4,
+              textAlign: "center",
+              borderRadius: 4,
+              height: "100%",
+              transition: "transform 0.2s",
+              "&:hover": { transform: "translateY(-8px)", boxShadow: 8 }
+            }}>
+              <Typography variant="h6" fontWeight={700} mb={1}>
+                Sustainable Data
+              </Typography>
+              <Typography color="text.secondary">
+                Curate and share impactful environmental and social datasets.
+              </Typography>
+            </Paper>
+          </Grid>
+          <Grid item xs={12} md={4}>
+            <Paper elevation={4} sx={{
+              p: 4,
+              textAlign: "center",
+              borderRadius: 4,
+              height: "100%",
+              transition: "transform 0.2s",
+              "&:hover": { transform: "translateY(-8px)", boxShadow: 8 }
+            }}>
+              <Typography variant="h6" fontWeight={700} mb={1}>
+                Open Collaboration
+              </Typography>
+              <Typography color="text.secondary">
+                Work openly, collaborate globally for better outcomes.
+              </Typography>
+            </Paper>
+          </Grid>
+          <Grid item xs={12} md={4}>
+            <Paper elevation={4} sx={{
+              p: 4,
+              textAlign: "center",
+              borderRadius: 4,
+              height: "100%",
+              transition: "transform 0.2s",
+              "&:hover": { transform: "translateY(-8px)", boxShadow: 8 }
+            }}>
+              <Typography variant="h6" fontWeight={700} mb={1}>
+                Powerful Insights
+              </Typography>
+              <Typography color="text.secondary">
+                Generate and visualize insights to drive positive change.
+              </Typography>
+            </Paper>
+          </Grid>
         </Grid>
       </Container>
 
@@ -143,7 +158,7 @@ export default function Home() {
 
       {/* Footer */}
       <Box sx={{
-        mt: "auto",
+        mt: "auto",  
         py: 3,
         bgcolor: "#222",
         color: "#fff",
