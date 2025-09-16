@@ -38,10 +38,8 @@ export default function Home() {
 
   return (
     <Box sx={{
-      minHeight: "100vh",
       bgcolor: "linear-gradient(135deg, #e3f2fd 0%, #ffffff 100%)",
-      display: "flex",
-      flexDirection: "column"
+      minHeight: "calc(100vh - 64px)" // Account for AppBar height
     }}>
       {/* Hero Section */}
       <Box sx={{
@@ -105,7 +103,7 @@ export default function Home() {
       </Container>
 
       {/* Login Section */}
-      <Container id="login" maxWidth="xs" sx={{ mb: 10 }}>
+      <Container id="login" maxWidth="xs" sx={{ pb: 10 }}>
         <Paper elevation={6} sx={{ p: 4, borderRadius: 3, mt: 4 }}>
           <Typography variant="h5" fontWeight={700} align="center" mb={2}>
             Login to Get Started
@@ -143,7 +141,6 @@ export default function Home() {
 
       {/* Footer */}
       <Box sx={{
-        mt: "auto",
         py: 3,
         bgcolor: "#222",
         color: "#fff",
