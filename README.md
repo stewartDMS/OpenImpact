@@ -66,20 +66,53 @@ Empower everyone—investors, media, regulators, students, and companies—to fr
 
 ```
 OpenImpact/
-├── public/               # Static assets (incl. logo)
+├── public/               # Static assets (logos, images, etc.)
 ├── src/
-│   ├── components/       # React components
-│   ├── pages/            # Next.js pages (incl. API routes)
-│   ├── lib/              # Utility functions & API clients
-│   ├── styles/
-│   └── types/
-├── scripts/              # Data scraping/ETL
+│   ├── components/       # Reusable React components
+│   │   ├── HelloWorld.tsx    # Example component with MUI styling
+│   │   ├── AuthForm.tsx      # Authentication form component
+│   │   ├── Dashboard.tsx     # Main dashboard component
+│   │   └── DataInputForm.tsx # Data input form component
+│   ├── layouts/          # Layout components
+│   │   └── MainLayout.tsx    # Main app layout with AppBar and footer
+│   ├── pages/            # Next.js pages and API routes
+│   │   ├── index.tsx         # Landing page
+│   │   └── api/              # API routes
+│   ├── hooks/            # Custom React hooks
+│   │   └── useIsMounted.ts   # Hook to check if component is mounted
+│   ├── utils/            # Utility functions
+│   │   └── formatDate.ts     # Date formatting utilities
+│   ├── lib/              # API clients and external service integrations
+│   │   ├── apiClient.ts      # Enhanced HTTP client with error handling
+│   │   └── apiClients.ts     # Legacy API client functions
+│   ├── styles/           # Global and component styles
+│   │   └── globals.css       # Global CSS with custom utilities
+│   └── types/            # TypeScript type definitions
+├── scripts/              # Data scraping/ETL scripts
 ├── README.md
 ├── CONTRIBUTING.md
 ├── next.config.js
 ├── package.json
 └── tsconfig.json
 ```
+
+### Directory Descriptions
+
+- **`/src/components/`** - Reusable React components that can be used across multiple pages. Each component should be self-contained with its own props interface.
+
+- **`/src/layouts/`** - Layout components that wrap page content. Use these for consistent page structure, navigation, and footers.
+
+- **`/src/pages/`** - Next.js pages for routing. Each file represents a route in your application. API routes go in `/src/pages/api/`.
+
+- **`/src/hooks/`** - Custom React hooks for sharing stateful logic between components. Follow the `use*` naming convention.
+
+- **`/src/utils/`** - Pure utility functions that don't depend on React. These should be framework-agnostic helper functions.
+
+- **`/src/lib/`** - External service integrations, API clients, and library configurations. More complex than utils, often stateful.
+
+- **`/src/styles/`** - Global CSS files, theme configurations, and style utilities. Components should use MUI's styling system when possible.
+
+- **`/src/types/`** - TypeScript type definitions, interfaces, and enums used across the application.
 
 ---
 
