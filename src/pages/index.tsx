@@ -1,22 +1,16 @@
-import { Box, Container, Typography, Button, Grid, Paper, Stack } from "@mui/material";
-import EcoIcon from "@mui/icons-material/Eco";
-import PublicIcon from "@mui/icons-material/Public";
-import InsightsIcon from "@mui/icons-material/Insights";
-import { useState } from "react";
+import { Box, Container, Typography, Button, Grid, Paper } from '@mui/material';
+import { useState } from 'react';
 
 const features = [
   {
-    icon: <EcoIcon color="success" sx={{ fontSize: 40 }} />, 
     title: "Sustainable Data",
     desc: "Curate and share impactful environmental and social datasets.",
   },
   {
-    icon: <PublicIcon color="primary" sx={{ fontSize: 40 }} />, 
     title: "Open Collaboration",
     desc: "Work openly, collaborate globally for better outcomes.",
   },
   {
-    icon: <InsightsIcon color="secondary" sx={{ fontSize: 40 }} />, 
     title: "Powerful Insights",
     desc: "Generate and visualize insights to drive positive change.",
   },
@@ -93,7 +87,17 @@ export default function Home() {
                 transition: "transform 0.2s",
                 "&:hover": { transform: "translateY(-8px)", boxShadow: 8 }
               }}>
-                <Box mb={2}>{f.icon}</Box>
+                <Box mb={2}>
+                  <div style={{ 
+                    fontSize: '40px', 
+                    color: '#2196f3',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    marginBottom: '16px'
+                  }}>
+                    📊
+                  </div>
+                </Box>
                 <Typography variant="h6" fontWeight={700} mb={1}>
                   {f.title}
                 </Typography>
@@ -107,36 +111,42 @@ export default function Home() {
       {/* Login Section */}
       <Container id="login" maxWidth="xs" sx={{ mb: 10 }}>
         <Paper elevation={6} sx={{ p: 4, borderRadius: 3, mt: 4 }}>
-          <Typography variant="h5" fontWeight={700} align="center" mb={2}>
-            Login to Get Started
+          <Typography variant="h5" align="center" fontWeight={600} mb={3}>
+            Join Open Impact
           </Typography>
           <form onSubmit={handleLogin}>
-            <Stack spacing={2}>
+            <Box mb={2}>
+              <Typography variant="body2" color="text.secondary" mb={1}>
+                Username
+              </Typography>
               <input
-                style={{
-                  padding: "12px",
-                  borderRadius: "6px",
-                  border: "1px solid #bdbdbd",
-                  fontSize: "1rem",
-                  width: "100%",
-                }}
-                placeholder="Enter username"
+                type="text"
                 value={username}
-                onChange={e => {
-                  setUsername(e.target.value);
-                  if (error) setError("");
+                onChange={(e) => setUsername(e.target.value)}
+                style={{
+                  width: "100%",
+                  padding: "12px",
+                  border: "1px solid #ddd",
+                  borderRadius: "8px",
+                  fontSize: "16px"
                 }}
-                autoFocus
+                placeholder="Enter your username"
               />
               {error && (
-                <Typography color="error" fontSize={14} align="left">
+                <Typography color="error" variant="body2" mt={1}>
                   {error}
                 </Typography>
               )}
-              <Button type="submit" variant="contained" size="large">
-                Log In
-              </Button>
-            </Stack>
+            </Box>
+            <Button
+              type="submit"
+              variant="contained"
+              fullWidth
+              size="large"
+              sx={{ mt: 2, py: 1.5, fontWeight: 600 }}
+            >
+              Sign In
+            </Button>
           </form>
         </Paper>
       </Container>

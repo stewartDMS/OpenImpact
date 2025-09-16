@@ -2,39 +2,33 @@
 
 **Open Impact** is an open-source dashboard and data platform that analyzes and benchmarks the social, environmental, economic, and cultural impacts of companies, industries, and countries in real time using open datasets and AI.
 
+## 🚀 Fresh Rebuild Notice
+
+This repository has been reset and rebuilt from the latest Next.js/MUI project structure. This represents a clean start with modern architecture and best practices.
+
 ## Vision
 
-Empower everyone—investors, media, regulators, students, and companies—to freely explore, understand, and improve global impact, using transparent data and AI-driven insights.
-
----
+To democratize access to impact data and enable organizations, researchers, and individuals to make data-driven decisions that create positive social and environmental change.
 
 ## Features
 
-- 🔑 **Sign-In Functions** (Firebase Auth)
-- 🗺️ **Interactive Global Dashboard** (by country, industry, sector, company)
-- 🌐 **Open Data Integrations**: World Bank, OECD, Transparency International, SEC/EDGAR, ASX, etc.
-- 🧠 **AI Analytics**: Natural language insights, benchmarking, and report automation (OpenAI, Claude, etc.)
-- 🏢 **Company API Onboarding**: Companies can securely connect and share read-only data
-- 📈 **Tracking & Improvement**: Historical metrics, benchmarks, improvement suggestions
-- 💳 **Stripe Integration**: Donations/support/premium
-- 🛠️ **Planned**: Voluntary API Kit (Xero, Workday, Snowflake); Blockchain/Tokenisation for “Impact Units”
-
----
+- **Real-time Impact Analytics**: Live dashboards showing social, environmental, and economic metrics
+- **Company Benchmarking**: Compare companies across industries on impact metrics
+- **Open Data Integration**: Seamless access to World Bank, SEC, ASX, and other public datasets
+- **AI-Powered Insights**: Machine learning analysis to identify trends and opportunities
+- **Community Collaboration**: Open platform for sharing data, insights, and best practices
 
 ## Tech Stack
 
-- **Frontend:** Next.js, React, TypeScript, Tailwind CSS
-- **Backend/API:** Next.js API Routes, Node.js, Python (scraping & ETL microservices)
-- **Data:** Firebase, PostgreSQL, Public APIs
-- **AI/ML:** OpenAI, Claude, HuggingFace
-- **Payments:** Stripe
-- **DevOps:** Vercel, Docker, GitHub Actions
-
----
+- **Frontend:** Next.js 14, React 18, TypeScript, Material-UI (MUI)
+- **Backend/API:** Next.js API Routes, Node.js
+- **Data:** Open APIs, Public Datasets
+- **AI/ML:** OpenAI, Machine Learning Models
+- **Deployment:** Vercel, GitHub Actions
 
 ## Getting Started
 
-1. Clone the repo:
+1. Clone the repository:
    ```bash
    git clone https://github.com/stewartDMS/OpenImpact.git
    cd OpenImpact
@@ -46,10 +40,9 @@ Empower everyone—investors, media, regulators, students, and companies—to fr
    ```
 
 3. Set up environment variables (`.env.local`):
-   ```
-   NEXT_PUBLIC_FIREBASE_API_KEY=xxx
-   OPENAI_API_KEY=xxx
-   STRIPE_API_KEY=xxx
+   ```env
+   NEXT_PUBLIC_API_URL=http://localhost:3000
+   OPENAI_API_KEY=your_openai_key
    # Add more as needed
    ```
 
@@ -58,61 +51,62 @@ Empower everyone—investors, media, regulators, students, and companies—to fr
    npm run dev
    ```
 
-5. Visit [http://localhost:3000](http://localhost:3000)
+5. Visit [http://localhost:3000](http://localhost:3000) to see the application
 
----
-
-## Folder Structure
+## Project Structure
 
 ```
 OpenImpact/
-├── public/               # Static assets (incl. logo)
+├── server/              # Server-side utilities and configurations
 ├── src/
-│   ├── components/       # React components
-│   ├── pages/            # Next.js pages (incl. API routes)
-│   ├── lib/              # Utility functions & API clients
-│   ├── styles/
-│   └── types/
-├── scripts/              # Data scraping/ETL
-├── README.md
-├── CONTRIBUTING.md
-├── next.config.js
-├── package.json
-└── tsconfig.json
+│   ├── components/      # React components
+│   ├── pages/           # Next.js pages and API routes
+│   ├── lib/             # Utility functions & API clients
+│   └── styles/          # Global styles and themes
+├── index.html           # HTML template
+├── next.config.js       # Next.js configuration
+├── package.json         # Dependencies and scripts
+├── tsconfig.json        # TypeScript configuration
+└── README.md           # This file
 ```
 
----
+## Development
+
+### Available Scripts
+
+- `npm run dev` - Start development server
+- `npm run build` - Build for production
+- `npm run start` - Start production server
+- `npm run lint` - Run ESLint
+
+### API Endpoints
+
+- `/api/health` - Health check endpoint
 
 ## Contributing
 
-Contributions are welcome! See [`CONTRIBUTING.md`](CONTRIBUTING.md).
+Contributions are welcome! Please feel free to submit a Pull Request.
 
----
+1. Fork the project
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
 
 ## License
 
-[MIT](LICENSE)
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Roadmap
+
+- [ ] Integrate World Bank API
+- [ ] Build interactive dashboard components
+- [ ] Add user authentication
+- [ ] Implement company data scraping
+- [ ] Add AI-powered insights
+- [ ] Create data visualization components
+- [ ] Set up automated data pipelines
 
 ---
 
-## Placeholder Logo
-
-![Open Impact Logo](public/logo-placeholder.png)
-
----
-
-## TODO / Backlog
-
-- [ ] Integrate first open data API (World Bank)
-- [ ] Set up Firebase authentication
-- [ ] Build baseline dashboard UI
-- [ ] Add AI insights endpoint (OpenAI/Claude)
-- [ ] Set up company onboarding API flow
-- [ ] Create Stripe integration for donations/support
-- [ ] Prepare connectors for SEC/EDGAR, ASX
-- [ ] (Backlog) Voluntary API Kit: Xero, Workday, Snowflake
-- [ ] (Backlog) Tokenisation/blockchain for Impact Units
-
----
-
-*Inspired by open data, global impact, and community collaboration.*
+*Empowering positive change through open data and collaborative insights.*
