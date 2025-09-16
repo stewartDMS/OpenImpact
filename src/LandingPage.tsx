@@ -1,12 +1,12 @@
 import { Box, Container, Typography, Button, Grid, Paper, Stack } from "@mui/material";
-import EcoIcon from "@mui/icons-material/Eco";
+import EnergySavingsLeafIcon from "@mui/icons-material/EnergySavingsLeaf";
 import PublicIcon from "@mui/icons-material/Public";
 import InsightsIcon from "@mui/icons-material/Insights";
 import { useState } from "react";
 
 const features = [
   {
-    icon: <EcoIcon color="success" sx={{ fontSize: 40 }} />, 
+    icon: <EnergySavingsLeafIcon color="success" sx={{ fontSize: 40 }} />, 
     title: "Sustainable Data",
     desc: "Curate and share impactful environmental and social datasets.",
   },
