@@ -3,6 +3,8 @@ import EnergySavingsLeafIcon from "@mui/icons-material/EnergySavingsLeaf";
 import LanguageIcon from "@mui/icons-material/Language";
 import InsightsIcon from "@mui/icons-material/Insights";
 import { useState } from "react";
+import Link from "next/link";
+import Navbar from "../components/Navbar";
 
 const features = [
   {
@@ -43,6 +45,8 @@ export default function Home() {
       display: "flex",
       flexDirection: "column"
     }}>
+      <Navbar />
+      
       {/* Hero Section */}
       <Box sx={{
         py: { xs: 8, md: 12 },
@@ -136,6 +140,19 @@ export default function Home() {
               <Button type="submit" variant="contained" size="large">
                 Log In
               </Button>
+
+              <Box textAlign="center" mt={2}>
+                <Typography variant="body2" color="text.secondary">
+                  Don&apos;t have an account?{" "}
+                  <Link href="/register" style={{ 
+                    color: "#2196f3", 
+                    textDecoration: "none",
+                    fontWeight: 600 
+                  }}>
+                    Sign Up
+                  </Link>
+                </Typography>
+              </Box>
             </Stack>
           </form>
         </Paper>
