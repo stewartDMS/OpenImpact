@@ -2,6 +2,8 @@
 
 **Open Impact** is an open-source dashboard and data platform that analyzes and benchmarks the social, environmental, economic, and cultural impacts of companies, industries, and countries in real time using open datasets and AI.
 
+> **Note:** This is a fresh start from Inscite-AI, containing only the essential project files to build a clean, focused foundation for the Open Impact platform.
+
 ## Vision
 
 Empower everyone—investors, media, regulators, students, and companies—to freely explore, understand, and improve global impact, using transparent data and AI-driven insights.
@@ -66,18 +68,19 @@ Empower everyone—investors, media, regulators, students, and companies—to fr
 
 ```
 OpenImpact/
-├── public/               # Static assets (incl. logo)
+├── server/               # Server-side code and API services
 ├── src/
 │   ├── components/       # React components
 │   ├── pages/            # Next.js pages (incl. API routes)
 │   ├── lib/              # Utility functions & API clients
 │   ├── styles/
 │   └── types/
-├── scripts/              # Data scraping/ETL
+├── .gitignore
 ├── README.md
-├── CONTRIBUTING.md
+├── index.html           # Main HTML template
 ├── next.config.js
 ├── package.json
+├── package-lock.json
 └── tsconfig.json
 ```
 
@@ -85,19 +88,13 @@ OpenImpact/
 
 ## Contributing
 
-Contributions are welcome! See [`CONTRIBUTING.md`](CONTRIBUTING.md).
+Contributions are welcome! Please open an issue or submit a pull request to contribute to this project.
 
 ---
 
 ## License
 
 [MIT](LICENSE)
-
----
-
-## Placeholder Logo
-
-![Open Impact Logo](public/logo-placeholder.png)
 
 ---
 
