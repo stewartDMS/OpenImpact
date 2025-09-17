@@ -1,37 +1,69 @@
 import { Box, Container, Typography, Button, Stack, Paper } from "@mui/material";
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
-import { useAuth } from "../lib/auth";
+import { signIn, useSession, getProviders } from "next-auth/react";
+import { GitHub, Google, Email } from "@mui/icons-material";
+import { GetServerSideProps } from "next";
 
-export default function Auth() {
-  const [username, setUsername] = useState("");
-  const [error, setError] = useState("");
-  const { login, isAuthenticated } = useAuth();
+interface AuthProps {
+  providers: Record<string, any> | null;
+}
+
+export default function Auth({ providers }: AuthProps) {
+  const { data: session, status } = useSession();
   const router = useRouter();
 
   // Redirect to dashboard if already authenticated
   useEffect(() => {
-    if (isAuthenticated) {
+    if (status === "authenticated") {
       router.push("/dashboard");
     }
-  }, [isAuthenticated, router]);
-
-  const handleLogin = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!username.trim()) {
-      setError("Username is required.");
-      return;
-    }
-    setError("");
-    login(username.trim());
-    router.push("/dashboard");
-  };
+  }, [status, router]);
 
   // Show loading or nothing while redirecting
-  if (isAuthenticated) {
+  if (status === "loading") {
+    return (
+      <Box sx={{
+        minHeight: "100vh",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+      }}>
+        <Typography>Loading...</Typography>
+      </Box>
+    );
+  }
+
+  if (status === "authenticated") {
     return null;
   }
+
+  const getProviderIcon = (providerId: string) => {
+    switch (providerId) {
+      case 'github':
+        return <GitHub />;
+      case 'google':
+        return <Google />;
+      case 'email':
+        return <Email />;
+      default:
+        return null;
+    }
+  };
+
+  const getProviderColor = (providerId: string) => {
+    switch (providerId) {
+      case 'github':
+        return { bgcolor: '#24292e', '&:hover': { bgcolor: '#1a1e22' } };
+      case 'google':
+        return { bgcolor: '#db4437', '&:hover': { bgcolor: '#c23321' } };
+      case 'email':
+        return {};
+      default:
+        return {};
+    }
+  };
 
   return (
     <Box sx={{
@@ -51,34 +83,29 @@ export default function Auth() {
             Sign in to access your dashboard
           </Typography>
           
-          <form onSubmit={handleLogin}>
-            <Stack spacing={2}>
-              <input
-                style={{
-                  padding: "12px",
-                  borderRadius: "6px",
-                  border: "1px solid #bdbdbd",
-                  fontSize: "1rem",
-                  width: "100%",
-                }}
-                placeholder="Enter username"
-                value={username}
-                onChange={e => {
-                  setUsername(e.target.value);
-                  if (error) setError("");
-                }}
-                autoFocus
-              />
-              {error && (
-                <Typography color="error" fontSize={14} align="left">
-                  {error}
-                </Typography>
-              )}
-              <Button type="submit" variant="contained" size="large">
-                Sign In
+          <Stack spacing={2}>
+            {providers && Object.values(providers).map((provider: any) => (
+              <Button
+                key={provider.name}
+                variant={provider.id === 'email' ? 'outlined' : 'contained'}
+                size="large"
+                startIcon={getProviderIcon(provider.id)}
+                onClick={() => signIn(provider.id)}
+                fullWidth
+                sx={getProviderColor(provider.id)}
+              >
+                Sign in with {provider.name}
               </Button>
-            </Stack>
-          </form>
+            ))}
+            
+            {(!providers || Object.keys(providers).length === 0) && (
+              <Typography color="text.secondary" align="center">
+                No authentication providers configured.
+                <br />
+                Please configure environment variables.
+              </Typography>
+            )}
+          </Stack>
 
           <Box sx={{ mt: 3, textAlign: "center" }}>
             <Link href="/" passHref>
@@ -92,3 +119,12 @@ export default function Auth() {
     </Box>
   );
 }
+
+export const getServerSideProps: GetServerSideProps = async () => {
+  const providers = await getProviders();
+  return {
+    props: {
+      providers,
+    },
+  };
+};
