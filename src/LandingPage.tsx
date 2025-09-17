@@ -1,8 +1,10 @@
-import { Box, Container, Typography, Button, Grid, Paper, Stack } from "@mui/material";
+import { Box, Container, Typography, Button, Grid, Paper } from "@mui/material";
 import EnergySavingsLeafIcon from "@mui/icons-material/EnergySavingsLeaf";
 import LanguageIcon from "@mui/icons-material/Language";
 import InsightsIcon from "@mui/icons-material/Insights";
-import { useState } from "react";
+import LoginIcon from "@mui/icons-material/Login";
+import { useSession, signOut } from "next-auth/react";
+import { useRouter } from "next/router";
 
 const features = [
   {
@@ -23,18 +25,8 @@ const features = [
 ];
 
 export default function Home() {
-  const [username, setUsername] = useState("");
-  const [error, setError] = useState("");
-
-  const handleLogin = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!username.trim()) {
-      setError("Username is required.");
-      return;
-    }
-    setError("");
-    // TODO: Implement login
-  };
+  const { data: session } = useSession();
+  const router = useRouter();
 
   return (
     <Box sx={{
@@ -58,7 +50,7 @@ export default function Home() {
             An open-source platform to explore, analyze, and share social and environmental impact data.
           </Typography>
           <Button
-            href="#login"
+            onClick={() => router.push('/auth')}
             variant="contained"
             size="large"
             sx={{
@@ -104,40 +96,46 @@ export default function Home() {
         </Grid>
       </Container>
 
-      {/* Login Section */}
-      <Container id="login" maxWidth="xs" sx={{ mb: 10 }}>
-        <Paper elevation={6} sx={{ p: 4, borderRadius: 3, mt: 4 }}>
-          <Typography variant="h5" fontWeight={700} align="center" mb={2}>
-            Login to Get Started
-          </Typography>
-          <form onSubmit={handleLogin}>
-            <Stack spacing={2}>
-              <input
-                style={{
-                  padding: "12px",
-                  borderRadius: "6px",
-                  border: "1px solid #bdbdbd",
-                  fontSize: "1rem",
-                  width: "100%",
-                }}
-                placeholder="Enter username"
-                value={username}
-                onChange={e => {
-                  setUsername(e.target.value);
-                  if (error) setError("");
-                }}
-                autoFocus
-              />
-              {error && (
-                <Typography color="error" fontSize={14} align="left">
-                  {error}
-                </Typography>
-              )}
-              <Button type="submit" variant="contained" size="large">
-                Log In
+      {/* Authentication Section */}
+      <Container maxWidth="xs" sx={{ mb: 10 }}>
+        <Paper elevation={6} sx={{ p: 4, borderRadius: 3, mt: 4, textAlign: "center" }}>
+          {session ? (
+            <>
+              <Typography variant="h5" fontWeight={700} mb={2}>
+                Welcome, {session.user?.name || session.user?.email}!
+              </Typography>
+              <Typography variant="body1" color="text.secondary" mb={3}>
+                You are now signed in to Open Impact
+              </Typography>
+              <Button 
+                variant="outlined" 
+                size="large" 
+                onClick={() => signOut()}
+                fullWidth
+              >
+                Sign Out
               </Button>
-            </Stack>
-          </form>
+            </>
+          ) : (
+            <>
+              <Typography variant="h5" fontWeight={700} mb={2}>
+                Ready to Make an Impact?
+              </Typography>
+              <Typography variant="body1" color="text.secondary" mb={3}>
+                Sign in to access powerful impact data and analytics
+              </Typography>
+              <Button
+                variant="contained"
+                size="large"
+                startIcon={<LoginIcon />}
+                onClick={() => router.push('/auth')}
+                fullWidth
+                sx={{ mb: 2 }}
+              >
+                Sign In
+              </Button>
+            </>
+          )}
         </Paper>
       </Container>
 
