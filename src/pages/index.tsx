@@ -3,6 +3,7 @@ import EnergySavingsLeafIcon from "@mui/icons-material/EnergySavingsLeaf";
 import LanguageIcon from "@mui/icons-material/Language";
 import InsightsIcon from "@mui/icons-material/Insights";
 import { useState } from "react";
+import Link from "next/link";
 
 const features = [
   {
@@ -138,6 +139,16 @@ export default function Home() {
               </Button>
             </Stack>
           </form>
+
+          {/* Sign Up Link */}
+          <Box sx={{ mt: 3, textAlign: "center" }}>
+            <Typography variant="body2" color="text.secondary">
+              Don&apos;t have an account?{" "}
+              <Link href="/register" style={{ color: "#2196f3", textDecoration: "none" }}>
+                <strong>Sign Up</strong>
+              </Link>
+            </Typography>
+          </Box>
         </Paper>
       </Container>
 
