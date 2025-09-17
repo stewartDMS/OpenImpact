@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { signIn, signOut, useSession, getSession } from 'next-auth/react'
+import { signIn, signOut, useSession } from 'next-auth/react'
 import { 
   Box, 
   Container, 
@@ -42,7 +42,7 @@ export default function AuthPage() {
     }
   }
 
-  const handleCredentialsSignIn = async (e: React.FormEvent) => {
+  const handleCredentialsSignIn = async (e) => {
     e.preventDefault()
     setError('')
     setLoading(true)

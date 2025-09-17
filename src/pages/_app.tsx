@@ -1,7 +1,8 @@
-import type { AppProps } from 'next/app'
-import { SessionProvider } from 'next-auth/react'
-import { ThemeProvider, createTheme } from '@mui/material/styles'
-import CssBaseline from '@mui/material/CssBaseline'
+import type { AppProps } from 'next/app';
+import { SessionProvider } from 'next-auth/react';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline';
+import '../styles/globals.css';
 
 // Create Material UI theme
 const theme = createTheme({
@@ -13,7 +14,7 @@ const theme = createTheme({
       main: '#21cbf3',
     },
   },
-})
+});
 
 export default function App({
   Component,
@@ -26,5 +27,5 @@ export default function App({
         <Component {...pageProps} />
       </ThemeProvider>
     </SessionProvider>
-  )
+  );
 }
