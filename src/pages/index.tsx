@@ -1,8 +1,9 @@
-import { Box, Container, Typography, Button, Grid, Paper, Stack } from "@mui/material";
+import { Box, Container, Typography, Button, Grid, Paper, Stack, Alert } from "@mui/material";
 import EnergySavingsLeafIcon from "@mui/icons-material/EnergySavingsLeaf";
 import LanguageIcon from "@mui/icons-material/Language";
 import InsightsIcon from "@mui/icons-material/Insights";
-import { useState } from "react";
+import { useSession, signIn, signOut } from "next-auth/react";
+import { useRouter } from "next/router";
 
 const features = [
   {
@@ -23,17 +24,15 @@ const features = [
 ];
 
 export default function Home() {
-  const [username, setUsername] = useState("");
-  const [error, setError] = useState("");
+  const { data: session, status } = useSession();
+  const router = useRouter();
 
-  const handleLogin = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!username.trim()) {
-      setError("Username is required.");
-      return;
-    }
-    setError("");
-    // TODO: Implement login
+  const handleSignIn = () => {
+    router.push('/auth');
+  };
+
+  const handleSignOut = () => {
+    signOut({ callbackUrl: '/' });
   };
 
   return (
@@ -58,9 +57,10 @@ export default function Home() {
             An open-source platform to explore, analyze, and share social and environmental impact data.
           </Typography>
           <Button
-            href="#login"
+            href={session ? "#dashboard" : "#login"}
             variant="contained"
             size="large"
+            onClick={session ? undefined : handleSignIn}
             sx={{
               bgcolor: "#fff",
               color: "#2196f3",
@@ -72,7 +72,7 @@ export default function Home() {
               "&:hover": { bgcolor: "#e3f2fd" },
             }}
           >
-            Get Started
+            {session ? "Go to Dashboard" : "Get Started"}
           </Button>
         </Container>
       </Box>
@@ -104,40 +104,61 @@ export default function Home() {
         </Grid>
       </Container>
 
-      {/* Login Section */}
-      <Container id="login" maxWidth="xs" sx={{ mb: 10 }}>
+      {/* Authentication/User Section */}
+      <Container id="login" maxWidth="sm" sx={{ mb: 10 }}>
         <Paper elevation={6} sx={{ p: 4, borderRadius: 3, mt: 4 }}>
-          <Typography variant="h5" fontWeight={700} align="center" mb={2}>
-            Login to Get Started
-          </Typography>
-          <form onSubmit={handleLogin}>
-            <Stack spacing={2}>
-              <input
-                style={{
-                  padding: "12px",
-                  borderRadius: "6px",
-                  border: "1px solid #bdbdbd",
-                  fontSize: "1rem",
-                  width: "100%",
-                }}
-                placeholder="Enter username"
-                value={username}
-                onChange={e => {
-                  setUsername(e.target.value);
-                  if (error) setError("");
-                }}
-                autoFocus
-              />
-              {error && (
-                <Typography color="error" fontSize={14} align="left">
-                  {error}
+          {session ? (
+            // Authenticated user view
+            <Box textAlign="center">
+              <Typography variant="h5" fontWeight={700} mb={2} color="primary">
+                Welcome back, {session.user?.name || session.user?.email}!
+              </Typography>
+              <Typography variant="body1" color="text.secondary" mb={3}>
+                You&apos;re successfully signed in to Open Impact.
+              </Typography>
+              <Stack spacing={2} direction={{ xs: 'column', sm: 'row' }} justifyContent="center">
+                <Button
+                  variant="contained"
+                  size="large"
+                  onClick={() => router.push('/dashboard')}
+                  sx={{ px: 4 }}
+                >
+                  Open Dashboard
+                </Button>
+                <Button
+                  variant="outlined"
+                  size="large"
+                  onClick={handleSignOut}
+                  sx={{ px: 4 }}
+                >
+                  Sign Out
+                </Button>
+              </Stack>
+            </Box>
+          ) : (
+            // Guest user view
+            <Box textAlign="center">
+              <Typography variant="h5" fontWeight={700} mb={2}>
+                Ready to Make an Impact?
+              </Typography>
+              <Typography variant="body1" color="text.secondary" mb={3}>
+                Sign in to access powerful tools for analyzing and sharing social and environmental impact data.
+              </Typography>
+              <Stack spacing={2}>
+                <Button
+                  variant="contained"
+                  size="large"
+                  onClick={handleSignIn}
+                  sx={{ py: 1.5 }}
+                >
+                  Sign In to Get Started
+                </Button>
+                <Typography variant="body2" color="text.secondary">
+                  New to Open Impact? Signing in will create your account automatically.
                 </Typography>
-              )}
-              <Button type="submit" variant="contained" size="large">
-                Log In
-              </Button>
-            </Stack>
-          </form>
+              </Stack>
+            </Box>
+          )}
         </Paper>
       </Container>
 
