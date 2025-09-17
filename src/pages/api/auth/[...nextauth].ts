@@ -4,7 +4,7 @@ import GoogleProvider from "next-auth/providers/google"
 import EmailProvider from "next-auth/providers/email"
 
 /**
- * NextAuth.js configuration for OpenImpact application
+ * NextAuth.js v4 configuration for OpenImpact application
  * 
  * Configures authentication providers:
  * - GitHub OAuth (for developer/tech users)
@@ -14,34 +14,35 @@ import EmailProvider from "next-auth/providers/email"
  * Environment variables required:
  * - GITHUB_ID, GITHUB_SECRET
  * - GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET  
- * - EMAIL_SERVER, EMAIL_FROM
+ * - EMAIL_SERVER_HOST, EMAIL_SERVER_PORT, EMAIL_SERVER_USER, EMAIL_SERVER_PASSWORD
+ * - EMAIL_FROM
  * - NEXTAUTH_URL, NEXTAUTH_SECRET
  */
 export default NextAuth({
   providers: [
     // GitHub OAuth Provider
     GithubProvider({
-      clientId: process.env.GITHUB_ID!,
-      clientSecret: process.env.GITHUB_SECRET!,
+      clientId: process.env.GITHUB_ID || "demo_github_id",
+      clientSecret: process.env.GITHUB_SECRET || "demo_github_secret",
     }),
     
     // Google OAuth Provider
     GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID!,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+      clientId: process.env.GOOGLE_CLIENT_ID || "demo_google_id",
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET || "demo_google_secret",
     }),
     
     // Email Provider (Magic Links)
     EmailProvider({
       server: {
-        host: process.env.EMAIL_SERVER_HOST,
-        port: process.env.EMAIL_SERVER_PORT,
+        host: process.env.EMAIL_SERVER_HOST || "smtp.gmail.com",
+        port: Number(process.env.EMAIL_SERVER_PORT) || 587,
         auth: {
-          user: process.env.EMAIL_SERVER_USER,
-          pass: process.env.EMAIL_SERVER_PASSWORD,
+          user: process.env.EMAIL_SERVER_USER || "demo_user",
+          pass: process.env.EMAIL_SERVER_PASSWORD || "demo_password",
         },
       },
-      from: process.env.EMAIL_FROM,
+      from: process.env.EMAIL_FROM || "noreply@openimpact.org",
     }),
   ],
   
@@ -63,7 +64,7 @@ export default NextAuth({
     },
     
     // The JWT callback is called whenever a JWT is created, updated, or accessed
-    async jwt({ token, user, account, profile }) {
+    async jwt({ token, user, account }) {
       // Persist the OAuth access_token to the token right after signin
       if (account) {
         token.accessToken = account.access_token

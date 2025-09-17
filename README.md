@@ -24,6 +24,7 @@ Empower everyone—investors, media, regulators, students, and companies—to fr
 ## Tech Stack
 
 - **Frontend:** Next.js, React, TypeScript, Tailwind CSS
+- **Authentication:** NextAuth.js (GitHub, Google, Email providers)
 - **Backend/API:** Next.js API Routes, Node.js, Python (scraping & ETL microservices)
 - **Data:** Firebase, PostgreSQL, Public APIs
 - **AI/ML:** OpenAI, Claude, HuggingFace
@@ -45,12 +46,31 @@ Empower everyone—investors, media, regulators, students, and companies—to fr
    npm install
    ```
 
-3. Set up environment variables (`.env.local`):
+3. Set up environment variables (copy `.env.example` to `.env.local`):
+   ```bash
+   cp .env.example .env.local
    ```
-   NEXT_PUBLIC_FIREBASE_API_KEY=xxx
-   OPENAI_API_KEY=xxx
-   STRIPE_API_KEY=xxx
-   # Add more as needed
+
+4. Configure authentication providers in `.env.local`:
+   ```env
+   # NextAuth.js Configuration
+   NEXTAUTH_URL=http://localhost:3000
+   NEXTAUTH_SECRET=your-secret-key-here
+
+   # GitHub OAuth (create at: https://github.com/settings/applications/new)
+   GITHUB_ID=your_github_client_id
+   GITHUB_SECRET=your_github_client_secret
+
+   # Google OAuth (create at: https://console.developers.google.com/)
+   GOOGLE_CLIENT_ID=your_google_client_id
+   GOOGLE_CLIENT_SECRET=your_google_client_secret
+
+   # Email Provider (configure your SMTP server)
+   EMAIL_SERVER_HOST=smtp.gmail.com
+   EMAIL_SERVER_PORT=587
+   EMAIL_SERVER_USER=your_smtp_user
+   EMAIL_SERVER_PASSWORD=your_smtp_password
+   EMAIL_FROM=noreply@openimpact.org
    ```
 
 4. Run the development server:
@@ -59,6 +79,29 @@ Empower everyone—investors, media, regulators, students, and companies—to fr
    ```
 
 5. Visit [http://localhost:3000](http://localhost:3000)
+
+## Authentication
+
+The application uses NextAuth.js for secure authentication with multiple providers:
+
+- **GitHub OAuth**: Perfect for developers and tech-savvy users
+- **Google OAuth**: Easy sign-in for general users  
+- **Email (Magic Links)**: Passwordless authentication via email
+
+### Setting up OAuth Providers
+
+**GitHub OAuth:**
+1. Go to [GitHub Settings > Developer settings > OAuth Apps](https://github.com/settings/applications/new)
+2. Create a new OAuth App with callback URL: `http://localhost:3000/api/auth/callback/github`
+3. Add the Client ID and Secret to your `.env.local`
+
+**Google OAuth:**
+1. Go to [Google Cloud Console](https://console.developers.google.com/)
+2. Create credentials for OAuth 2.0 client with callback URL: `http://localhost:3000/api/auth/callback/google`
+3. Add the Client ID and Secret to your `.env.local`
+
+**Email Provider:**
+Configure your SMTP server details in `.env.local` for magic link authentication.
 
 ---
 
