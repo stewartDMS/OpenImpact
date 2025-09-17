@@ -10,7 +10,7 @@ Empower everyone—investors, media, regulators, students, and companies—to fr
 
 ## Features
 
-- 🔑 **Sign-In Functions** (Firebase Auth)
+- 🔑 **Authentication System** (NextAuth.js with Google OAuth and Demo Credentials)
 - 🗺️ **Interactive Global Dashboard** (by country, industry, sector, company)
 - 🌐 **Open Data Integrations**: World Bank, OECD, Transparency International, SEC/EDGAR, ASX, etc.
 - 🧠 **AI Analytics**: Natural language insights, benchmarking, and report automation (OpenAI, Claude, etc.)
@@ -45,12 +45,25 @@ Empower everyone—investors, media, regulators, students, and companies—to fr
    npm install
    ```
 
-3. Set up environment variables (`.env.local`):
+3. Set up environment variables (copy `.env.local.example` to `.env.local`):
+   ```bash
+   cp .env.local.example .env.local
    ```
+   
+   Edit `.env.local` and add your configuration:
+   ```
+   # NextAuth.js Configuration (required)
+   NEXTAUTH_URL=http://localhost:3000
+   NEXTAUTH_SECRET=your-secret-key-here-change-in-production
+   
+   # Google OAuth (optional - leave empty to use demo credentials only)
+   GOOGLE_CLIENT_ID=your-google-client-id
+   GOOGLE_CLIENT_SECRET=your-google-client-secret
+   
+   # Other API Keys
    NEXT_PUBLIC_FIREBASE_API_KEY=xxx
    OPENAI_API_KEY=xxx
    STRIPE_API_KEY=xxx
-   # Add more as needed
    ```
 
 4. Run the development server:
@@ -59,6 +72,27 @@ Empower everyone—investors, media, regulators, students, and companies—to fr
    ```
 
 5. Visit [http://localhost:3000](http://localhost:3000)
+
+## Authentication
+
+The app uses NextAuth.js for authentication with two providers:
+
+### Demo Credentials
+- **Username:** `demo`
+- **Password:** `password`
+- Use these credentials to test the authentication flow without setting up OAuth
+
+### Google OAuth (optional)
+To enable Google sign-in:
+1. Create a Google OAuth application in the [Google Cloud Console](https://console.cloud.google.com/)
+2. Add `http://localhost:3000/api/auth/callback/google` to authorized redirect URIs  
+3. Copy the Client ID and Client Secret to your `.env.local` file
+
+### Authentication Flow
+- **Landing Page:** Shows "Sign In" button when unauthenticated
+- **Sign In Page:** `/auth` - Choose between Google OAuth or demo credentials
+- **Authenticated State:** Shows user menu with name/email and "Sign Out" option
+- **Dashboard:** Authenticated users see a personalized dashboard on the home page
 
 ---
 
