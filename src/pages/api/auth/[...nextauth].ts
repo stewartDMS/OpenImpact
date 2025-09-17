@@ -1,0 +1,82 @@
+import NextAuth from "next-auth"
+import GithubProvider from "next-auth/providers/github"
+import GoogleProvider from "next-auth/providers/google"
+import EmailProvider from "next-auth/providers/email"
+
+/**
+ * NextAuth.js configuration for OpenImpact application
+ * 
+ * Configures authentication providers:
+ * - GitHub OAuth (for developer/tech users)
+ * - Google OAuth (for general users)
+ * - Email (passwordless magic link authentication)
+ * 
+ * Environment variables required:
+ * - GITHUB_ID, GITHUB_SECRET
+ * - GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET  
+ * - EMAIL_SERVER, EMAIL_FROM
+ * - NEXTAUTH_URL, NEXTAUTH_SECRET
+ */
+export default NextAuth({
+  providers: [
+    // GitHub OAuth Provider
+    GithubProvider({
+      clientId: process.env.GITHUB_ID!,
+      clientSecret: process.env.GITHUB_SECRET!,
+    }),
+    
+    // Google OAuth Provider
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID!,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+    }),
+    
+    // Email Provider (Magic Links)
+    EmailProvider({
+      server: {
+        host: process.env.EMAIL_SERVER_HOST,
+        port: process.env.EMAIL_SERVER_PORT,
+        auth: {
+          user: process.env.EMAIL_SERVER_USER,
+          pass: process.env.EMAIL_SERVER_PASSWORD,
+        },
+      },
+      from: process.env.EMAIL_FROM,
+    }),
+  ],
+  
+  // Customize pages for better integration with the app theme
+  pages: {
+    signIn: '/auth', // Use our custom auth page
+  },
+  
+  // Callbacks for customizing session and JWT
+  callbacks: {
+    // The session callback is called whenever a session is checked
+    async session({ session, token }) {
+      // Add custom properties to session if needed
+      if (session.user && token.sub) {
+        // Add user ID from token to session
+        (session.user as any).id = token.sub
+      }
+      return session
+    },
+    
+    // The JWT callback is called whenever a JWT is created, updated, or accessed
+    async jwt({ token, user, account, profile }) {
+      // Persist the OAuth access_token to the token right after signin
+      if (account) {
+        token.accessToken = account.access_token
+      }
+      return token
+    },
+  },
+  
+  // Configure session strategy
+  session: {
+    strategy: "jwt",
+  },
+  
+  // Enable debug messages in development
+  debug: process.env.NODE_ENV === "development",
+})

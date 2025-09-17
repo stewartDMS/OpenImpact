@@ -1,11 +1,20 @@
 import type { AppProps } from 'next/app';
-import { AuthProvider } from '../components/AuthProvider';
+import { SessionProvider } from 'next-auth/react';
 import '../styles/globals.css';
 
-export default function App({ Component, pageProps }: AppProps) {
+/**
+ * Root App component wrapped with NextAuth.js SessionProvider
+ * 
+ * The SessionProvider provides session state to all child components,
+ * enabling authentication state management throughout the application.
+ */
+export default function App({ 
+  Component, 
+  pageProps: { session, ...pageProps } 
+}: AppProps) {
   return (
-    <AuthProvider>
+    <SessionProvider session={session}>
       <Component {...pageProps} />
-    </AuthProvider>
+    </SessionProvider>
   );
 }
