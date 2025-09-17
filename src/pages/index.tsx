@@ -1,8 +1,9 @@
-import { Box, Container, Typography, Button, Grid, Paper, Stack } from "@mui/material";
+import { Box, Container, Typography, Button, Grid, Paper } from "@mui/material";
 import EnergySavingsLeafIcon from "@mui/icons-material/EnergySavingsLeaf";
 import LanguageIcon from "@mui/icons-material/Language";
 import InsightsIcon from "@mui/icons-material/Insights";
-import { useState } from "react";
+import { useSession, signOut } from "next-auth/react";
+import { useRouter } from "next/router";
 
 const features = [
   {
@@ -23,17 +24,22 @@ const features = [
 ];
 
 export default function Home() {
-  const [username, setUsername] = useState("");
-  const [error, setError] = useState("");
+  const { data: session, status } = useSession();
+  const router = useRouter();
 
-  const handleLogin = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!username.trim()) {
-      setError("Username is required.");
-      return;
+  const handleSignOut = () => {
+    signOut({ callbackUrl: '/auth' });
+  };
+
+  const handleGetStarted = () => {
+    if (session) {
+      // User is logged in, could redirect to dashboard
+      // For now, just scroll to features or show user info
+      document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' });
+    } else {
+      // User not logged in, redirect to auth page
+      router.push('/auth');
     }
-    setError("");
-    // TODO: Implement login
   };
 
   return (
@@ -57,28 +63,72 @@ export default function Home() {
           <Typography variant="h5" color="inherit" sx={{ mb: 4 }}>
             An open-source platform to explore, analyze, and share social and environmental impact data.
           </Typography>
-          <Button
-            href="#login"
-            variant="contained"
-            size="large"
-            sx={{
-              bgcolor: "#fff",
-              color: "#2196f3",
-              fontWeight: 600,
-              px: 5,
-              py: 1.5,
-              fontSize: "1.15rem",
-              boxShadow: 2,
-              "&:hover": { bgcolor: "#e3f2fd" },
-            }}
-          >
-            Get Started
-          </Button>
+          
+          {session ? (
+            <Box>
+              <Typography variant="h6" sx={{ mb: 2 }}>
+                Welcome back, {session.user?.name}!
+              </Typography>
+              <Box sx={{ display: 'flex', gap: 2, justifyContent: 'center', flexWrap: 'wrap' }}>
+                <Button
+                  onClick={handleGetStarted}
+                  variant="contained"
+                  size="large"
+                  sx={{
+                    bgcolor: "#fff",
+                    color: "#2196f3",
+                    fontWeight: 600,
+                    px: 5,
+                    py: 1.5,
+                    fontSize: "1.15rem",
+                    boxShadow: 2,
+                    "&:hover": { bgcolor: "#e3f2fd" },
+                  }}
+                >
+                  Explore Dashboard
+                </Button>
+                <Button
+                  onClick={handleSignOut}
+                  variant="outlined"
+                  size="large"
+                  sx={{
+                    borderColor: "#fff",
+                    color: "#fff",
+                    fontWeight: 600,
+                    px: 5,
+                    py: 1.5,
+                    fontSize: "1.15rem",
+                    "&:hover": { borderColor: "#e3f2fd", bgcolor: "rgba(255,255,255,0.1)" },
+                  }}
+                >
+                  Sign Out
+                </Button>
+              </Box>
+            </Box>
+          ) : (
+            <Button
+              onClick={handleGetStarted}
+              variant="contained"
+              size="large"
+              sx={{
+                bgcolor: "#fff",
+                color: "#2196f3",
+                fontWeight: 600,
+                px: 5,
+                py: 1.5,
+                fontSize: "1.15rem",
+                boxShadow: 2,
+                "&:hover": { bgcolor: "#e3f2fd" },
+              }}
+            >
+              Get Started
+            </Button>
+          )}
         </Container>
       </Box>
 
       {/* Features Section */}
-      <Container sx={{ py: { xs: 6, md: 10 } }}>
+      <Container id="features" sx={{ py: { xs: 6, md: 10 } }}>
         <Typography variant="h4" align="center" fontWeight={700} gutterBottom>
           Why Open Impact?
         </Typography>
@@ -102,43 +152,6 @@ export default function Home() {
             </Grid>
           ))}
         </Grid>
-      </Container>
-
-      {/* Login Section */}
-      <Container id="login" maxWidth="xs" sx={{ mb: 10 }}>
-        <Paper elevation={6} sx={{ p: 4, borderRadius: 3, mt: 4 }}>
-          <Typography variant="h5" fontWeight={700} align="center" mb={2}>
-            Login to Get Started
-          </Typography>
-          <form onSubmit={handleLogin}>
-            <Stack spacing={2}>
-              <input
-                style={{
-                  padding: "12px",
-                  borderRadius: "6px",
-                  border: "1px solid #bdbdbd",
-                  fontSize: "1rem",
-                  width: "100%",
-                }}
-                placeholder="Enter username"
-                value={username}
-                onChange={e => {
-                  setUsername(e.target.value);
-                  if (error) setError("");
-                }}
-                autoFocus
-              />
-              {error && (
-                <Typography color="error" fontSize={14} align="left">
-                  {error}
-                </Typography>
-              )}
-              <Button type="submit" variant="contained" size="large">
-                Log In
-              </Button>
-            </Stack>
-          </form>
-        </Paper>
       </Container>
 
       {/* Footer */}

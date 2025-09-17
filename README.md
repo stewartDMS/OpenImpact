@@ -10,7 +10,7 @@ Empower everyone—investors, media, regulators, students, and companies—to fr
 
 ## Features
 
-- 🔑 **Sign-In Functions** (Firebase Auth)
+- 🔑 **Authentication** (NextAuth.js with Credentials & Google OAuth)
 - 🗺️ **Interactive Global Dashboard** (by country, industry, sector, company)
 - 🌐 **Open Data Integrations**: World Bank, OECD, Transparency International, SEC/EDGAR, ASX, etc.
 - 🧠 **AI Analytics**: Natural language insights, benchmarking, and report automation (OpenAI, Claude, etc.)
@@ -25,10 +25,33 @@ Empower everyone—investors, media, regulators, students, and companies—to fr
 
 - **Frontend:** Next.js, React, TypeScript, Tailwind CSS
 - **Backend/API:** Next.js API Routes, Node.js, Python (scraping & ETL microservices)
-- **Data:** Firebase, PostgreSQL, Public APIs
+- **Data:** PostgreSQL, Public APIs
 - **AI/ML:** OpenAI, Claude, HuggingFace
 - **Payments:** Stripe
 - **DevOps:** Vercel, Docker, GitHub Actions
+
+---
+
+## Authentication
+
+The application uses NextAuth.js for authentication with support for:
+
+- **Credentials Authentication**: Username/password login (placeholder logic for now)
+- **Google OAuth**: Sign in with Google (requires Google OAuth setup)
+
+### Setting up Google OAuth (Optional)
+
+1. Go to the [Google Cloud Console](https://console.cloud.google.com/)
+2. Create a new project or select an existing one
+3. Enable the Google+ API
+4. Create OAuth 2.0 credentials
+5. Add authorized redirect URIs: `http://localhost:3000/api/auth/callback/google`
+6. Add the client ID and secret to your `.env.local`
+
+### Authentication Pages
+
+- `/auth` - Dedicated sign-in page with Material UI design
+- Protected routes automatically redirect to `/auth` when not authenticated
 
 ---
 
@@ -47,10 +70,16 @@ Empower everyone—investors, media, regulators, students, and companies—to fr
 
 3. Set up environment variables (`.env.local`):
    ```
-   NEXT_PUBLIC_FIREBASE_API_KEY=xxx
+   # Generate a secret for NextAuth.js
+   npm run generate-secret
+   
+   # Copy .env.local.example to .env.local and fill in:
+   NEXTAUTH_SECRET=your_generated_secret
+   NEXTAUTH_URL=http://localhost:3000
+   GOOGLE_CLIENT_ID=xxx  # (optional, for Google OAuth)
+   GOOGLE_CLIENT_SECRET=xxx  # (optional, for Google OAuth)
    OPENAI_API_KEY=xxx
    STRIPE_API_KEY=xxx
-   # Add more as needed
    ```
 
 4. Run the development server:
@@ -104,7 +133,7 @@ Contributions are welcome! See [`CONTRIBUTING.md`](CONTRIBUTING.md).
 ## TODO / Backlog
 
 - [ ] Integrate first open data API (World Bank)
-- [ ] Set up Firebase authentication
+- [x] Set up NextAuth.js authentication with credentials and Google OAuth
 - [ ] Build baseline dashboard UI
 - [ ] Add AI insights endpoint (OpenAI/Claude)
 - [ ] Set up company onboarding API flow
