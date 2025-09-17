@@ -10,7 +10,7 @@ Empower everyone—investors, media, regulators, students, and companies—to fr
 
 ## Features
 
-- 🔑 **Sign-In Functions** (Firebase Auth)
+- 🔑 **Authentication System** (NextAuth.js with Google OAuth & credentials)
 - 🗺️ **Interactive Global Dashboard** (by country, industry, sector, company)
 - 🌐 **Open Data Integrations**: World Bank, OECD, Transparency International, SEC/EDGAR, ASX, etc.
 - 🧠 **AI Analytics**: Natural language insights, benchmarking, and report automation (OpenAI, Claude, etc.)
@@ -47,10 +47,18 @@ Empower everyone—investors, media, regulators, students, and companies—to fr
 
 3. Set up environment variables (`.env.local`):
    ```
+   # NextAuth.js Configuration (required)
+   NEXTAUTH_URL=http://localhost:3000
+   NEXTAUTH_SECRET=your-secret-key-here
+   
+   # Google OAuth (optional - for production use)
+   GOOGLE_CLIENT_ID=your-google-client-id  
+   GOOGLE_CLIENT_SECRET=your-google-client-secret
+   
+   # Other APIs (optional)
    NEXT_PUBLIC_FIREBASE_API_KEY=xxx
    OPENAI_API_KEY=xxx
    STRIPE_API_KEY=xxx
-   # Add more as needed
    ```
 
 4. Run the development server:
@@ -104,7 +112,7 @@ Contributions are welcome! See [`CONTRIBUTING.md`](CONTRIBUTING.md).
 ## TODO / Backlog
 
 - [ ] Integrate first open data API (World Bank)
-- [ ] Set up Firebase authentication
+- [x] ~~Set up Firebase authentication~~ → **Completed: NextAuth.js authentication system implemented**
 - [ ] Build baseline dashboard UI
 - [ ] Add AI insights endpoint (OpenAI/Claude)
 - [ ] Set up company onboarding API flow
