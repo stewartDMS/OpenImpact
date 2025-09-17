@@ -23,8 +23,9 @@ Empower everyone—investors, media, regulators, students, and companies—to fr
 
 ## Tech Stack
 
-- **Frontend:** Next.js, React, TypeScript, Tailwind CSS
+- **Frontend:** Next.js, React, TypeScript, Material-UI
 - **Backend/API:** Next.js API Routes, Node.js, Python (scraping & ETL microservices)
+- **Authentication:** NextAuth.js (Google OAuth + Credentials)
 - **Data:** Firebase, PostgreSQL, Public APIs
 - **AI/ML:** OpenAI, Claude, HuggingFace
 - **Payments:** Stripe
@@ -47,6 +48,15 @@ Empower everyone—investors, media, regulators, students, and companies—to fr
 
 3. Set up environment variables (`.env.local`):
    ```
+   # NextAuth.js Configuration
+   NEXTAUTH_URL=http://localhost:3000
+   NEXTAUTH_SECRET=your-nextauth-secret-key-here
+   
+   # Google OAuth (optional)
+   GOOGLE_CLIENT_ID=your-google-client-id
+   GOOGLE_CLIENT_SECRET=your-google-client-secret
+   
+   # Other API Keys
    NEXT_PUBLIC_FIREBASE_API_KEY=xxx
    OPENAI_API_KEY=xxx
    STRIPE_API_KEY=xxx
@@ -59,6 +69,32 @@ Empower everyone—investors, media, regulators, students, and companies—to fr
    ```
 
 5. Visit [http://localhost:3000](http://localhost:3000)
+
+---
+
+## Authentication
+
+Open Impact uses NextAuth.js for secure authentication with multiple providers:
+
+### Demo Credentials
+For testing and development, use these demo credentials:
+- **Username:** `demo`
+- **Password:** `password`
+
+### Google OAuth (Optional)
+To enable Google OAuth:
+1. Go to [Google Cloud Console](https://console.cloud.google.com/)
+2. Create a new project or select existing one
+3. Enable Google+ API
+4. Create OAuth 2.0 credentials
+5. Add your domain to authorized origins
+6. Set `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` in your `.env.local`
+
+### Authentication Flow
+1. **Unauthenticated users** see the landing page with features and a "Sign In" button
+2. **Click "Sign In"** redirects to `/auth` page with sign-in options
+3. **After authentication** users see a personalized dashboard with their profile
+4. **User menu** in the header allows access to profile and sign out
 
 ---
 
