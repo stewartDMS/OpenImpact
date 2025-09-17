@@ -1,4 +1,4 @@
-import { Box, Container, Typography, Button, Paper, Divider } from "@mui/material";
+import { Box, Container, Typography, Button, Paper, Divider, TextField } from "@mui/material";
 import { signIn, getSession, getProviders } from "next-auth/react";
 import { GetServerSideProps } from "next";
 import GoogleIcon from "@mui/icons-material/Google";
@@ -11,10 +11,33 @@ interface AuthPageProps {
 
 export default function AuthPage({ providers }: AuthPageProps) {
   const [isLoading, setIsLoading] = useState<string | null>(null);
+  const [showCredentialsForm, setShowCredentialsForm] = useState(false);
+  const [credentials, setCredentials] = useState({ username: "", password: "" });
 
   const handleSignIn = async (providerId: string) => {
     setIsLoading(providerId);
     await signIn(providerId, { callbackUrl: "/" });
+    setIsLoading(null);
+  };
+
+  const handleDemoLogin = async () => {
+    setIsLoading("credentials");
+    await signIn("credentials", {
+      username: "demo",
+      password: "password",
+      callbackUrl: "/",
+    });
+    setIsLoading(null);
+  };
+
+  const handleCredentialsSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading("credentials");
+    await signIn("credentials", {
+      username: credentials.username,
+      password: credentials.password,
+      callbackUrl: "/",
+    });
     setIsLoading(null);
   };
 
@@ -37,57 +60,90 @@ export default function AuthPage({ providers }: AuthPageProps) {
           </Typography>
 
           <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
-            {providers && Object.values(providers).map((provider: any) => {
-              if (provider.id === "credentials") {
-                return (
-                  <Button
-                    key={provider.id}
-                    variant="contained"
-                    size="large"
-                    onClick={() => handleSignIn(provider.id)}
-                    disabled={isLoading === provider.id}
-                    startIcon={<LoginIcon />}
-                    sx={{
-                      py: 1.5,
-                      fontSize: "1rem",
-                      fontWeight: 600,
-                      bgcolor: "#2196f3",
-                      "&:hover": { bgcolor: "#1976d2" }
-                    }}
-                  >
-                    {isLoading === provider.id ? "Signing in..." : "Demo Login"}
-                  </Button>
-                );
-              }
+            {/* Demo Login Button */}
+            <Button
+              variant="contained"
+              size="large"
+              onClick={handleDemoLogin}
+              disabled={isLoading === "credentials"}
+              startIcon={<LoginIcon />}
+              sx={{
+                py: 1.5,
+                fontSize: "1rem",
+                fontWeight: 600,
+                bgcolor: "#2196f3",
+                "&:hover": { bgcolor: "#1976d2" }
+              }}
+            >
+              {isLoading === "credentials" ? "Signing in..." : "Demo Login"}
+            </Button>
 
-              if (provider.id === "google") {
-                return (
-                  <Button
-                    key={provider.id}
-                    variant="outlined"
-                    size="large"
-                    onClick={() => handleSignIn(provider.id)}
-                    disabled={isLoading === provider.id}
-                    startIcon={<GoogleIcon />}
-                    sx={{
-                      py: 1.5,
-                      fontSize: "1rem",
-                      fontWeight: 600,
-                      borderColor: "#db4437",
-                      color: "#db4437",
-                      "&:hover": { 
-                        borderColor: "#c23321",
-                        bgcolor: "#fce8e6"
-                      }
-                    }}
-                  >
-                    {isLoading === provider.id ? "Signing in..." : `Sign in with ${provider.name}`}
-                  </Button>
-                );
-              }
+            {/* Google OAuth */}
+            {providers?.google && (
+              <Button
+                variant="outlined"
+                size="large"
+                onClick={() => handleSignIn("google")}
+                disabled={isLoading === "google"}
+                startIcon={<GoogleIcon />}
+                sx={{
+                  py: 1.5,
+                  fontSize: "1rem",
+                  fontWeight: 600,
+                  borderColor: "#db4437",
+                  color: "#db4437",
+                  "&:hover": { 
+                    borderColor: "#c23321",
+                    bgcolor: "#fce8e6"
+                  }
+                }}
+              >
+                {isLoading === "google" ? "Signing in..." : "Sign in with Google"}
+              </Button>
+            )}
 
-              return null;
-            })}
+            <Divider>
+              <Typography variant="body2" color="text.secondary">
+                or use custom credentials
+              </Typography>
+            </Divider>
+
+            {/* Custom Credentials Form Toggle */}
+            <Button
+              variant="text"
+              onClick={() => setShowCredentialsForm(!showCredentialsForm)}
+              sx={{ color: "#2196f3" }}
+            >
+              {showCredentialsForm ? "Hide" : "Show"} Custom Login Form
+            </Button>
+
+            {showCredentialsForm && (
+              <Box component="form" onSubmit={handleCredentialsSubmit} sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+                <TextField
+                  label="Username"
+                  variant="outlined"
+                  value={credentials.username}
+                  onChange={(e) => setCredentials(prev => ({ ...prev, username: e.target.value }))}
+                  required
+                />
+                <TextField
+                  label="Password"
+                  type="password"
+                  variant="outlined"
+                  value={credentials.password}
+                  onChange={(e) => setCredentials(prev => ({ ...prev, password: e.target.value }))}
+                  required
+                />
+                <Button
+                  type="submit"
+                  variant="contained"
+                  disabled={isLoading === "credentials"}
+                  sx={{ py: 1.5 }}
+                >
+                  {isLoading === "credentials" ? "Signing in..." : "Sign In"}
+                </Button>
+              </Box>
+            )}
           </Box>
 
           <Divider sx={{ my: 4 }}>
