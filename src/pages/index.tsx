@@ -1,8 +1,8 @@
-import { Box, Container, Typography, Button, Grid, Paper, Stack } from "@mui/material";
+import { Box, Container, Typography, Button, Grid, Paper } from "@mui/material";
 import EnergySavingsLeafIcon from "@mui/icons-material/EnergySavingsLeaf";
 import LanguageIcon from "@mui/icons-material/Language";
 import InsightsIcon from "@mui/icons-material/Insights";
-import { useState } from "react";
+import Link from "next/link";
 
 const features = [
   {
@@ -23,18 +23,6 @@ const features = [
 ];
 
 export default function Home() {
-  const [username, setUsername] = useState("");
-  const [error, setError] = useState("");
-
-  const handleLogin = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!username.trim()) {
-      setError("Username is required.");
-      return;
-    }
-    setError("");
-    // TODO: Implement login
-  };
 
   return (
     <Box sx={{
@@ -58,7 +46,8 @@ export default function Home() {
             An open-source platform to explore, analyze, and share social and environmental impact data.
           </Typography>
           <Button
-            href="#login"
+            href="/auth"
+            component={Link}
             variant="contained"
             size="large"
             sx={{
@@ -106,38 +95,23 @@ export default function Home() {
 
       {/* Login Section */}
       <Container id="login" maxWidth="xs" sx={{ mb: 10 }}>
-        <Paper elevation={6} sx={{ p: 4, borderRadius: 3, mt: 4 }}>
+        <Paper elevation={6} sx={{ p: 4, borderRadius: 3, mt: 4, textAlign: "center" }}>
           <Typography variant="h5" fontWeight={700} align="center" mb={2}>
-            Login to Get Started
+            Ready to Get Started?
           </Typography>
-          <form onSubmit={handleLogin}>
-            <Stack spacing={2}>
-              <input
-                style={{
-                  padding: "12px",
-                  borderRadius: "6px",
-                  border: "1px solid #bdbdbd",
-                  fontSize: "1rem",
-                  width: "100%",
-                }}
-                placeholder="Enter username"
-                value={username}
-                onChange={e => {
-                  setUsername(e.target.value);
-                  if (error) setError("");
-                }}
-                autoFocus
-              />
-              {error && (
-                <Typography color="error" fontSize={14} align="left">
-                  {error}
-                </Typography>
-              )}
-              <Button type="submit" variant="contained" size="large">
-                Log In
-              </Button>
-            </Stack>
-          </form>
+          <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
+            Sign in to explore social and environmental impact data
+          </Typography>
+          <Button
+            component={Link}
+            href="/auth"
+            variant="contained"
+            size="large"
+            fullWidth
+            sx={{ py: 1.5 }}
+          >
+            Sign In / Sign Up
+          </Button>
         </Paper>
       </Container>
 
