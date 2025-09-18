@@ -20,6 +20,7 @@ export default function Auth() {
   const { data: session, status } = useSession();
   const router = useRouter();
   const [isLoading, setIsLoading] = useState("");
+  const [isSignUp, setIsSignUp] = useState(false);
 
   // Redirect to dashboard if already authenticated
   useEffect(() => {
@@ -70,10 +71,10 @@ export default function Auth() {
       <Container maxWidth="xs">
         <Paper elevation={6} sx={{ p: 4, borderRadius: 3 }}>
           <Typography variant="h4" fontWeight={700} align="center" mb={1}>
-            Welcome to Open Impact
+            {isSignUp ? "Sign Up" : "Welcome to Open Impact"}
           </Typography>
           <Typography variant="body1" color="text.secondary" align="center" mb={4}>
-            Sign in to access your dashboard
+            {isSignUp ? "Create an account to get started" : "Sign in to access your dashboard"}
           </Typography>
           
           <Stack spacing={3}>
@@ -92,7 +93,7 @@ export default function Auth() {
                 fontSize: "1rem",
               }}
             >
-              {isLoading === "github" ? "Signing in..." : "Continue with GitHub"}
+              {isLoading === "github" ? (isSignUp ? "Signing up..." : "Signing in...") : (isSignUp ? "Sign up with GitHub" : "Continue with GitHub")}
             </Button>
 
             {/* Google Sign In */}
@@ -118,7 +119,7 @@ export default function Auth() {
                 "&:hover": { borderColor: "#1976d2", bgcolor: "#f8f9fa" },
               }}
             >
-              {isLoading === "google" ? "Signing in..." : "Continue with Google"}
+              {isLoading === "google" ? (isSignUp ? "Signing up..." : "Signing in...") : (isSignUp ? "Sign up with Google" : "Continue with Google")}
             </Button>
 
             <Divider sx={{ my: 2 }}>or</Divider>
@@ -136,9 +137,31 @@ export default function Auth() {
                 fontSize: "1rem",
               }}
             >
-              {isLoading === "email" ? "Sending magic link..." : "Sign in with Email"}
+              {isLoading === "email" ? "Sending magic link..." : (isSignUp ? "Sign up with Email" : "Sign in with Email")}
             </Button>
           </Stack>
+
+          {/* Sign In/Sign Up Toggle */}
+          <Box sx={{ mt: 3, textAlign: "center" }}>
+            <Typography variant="body2" color="text.secondary" component="span">
+              {isSignUp ? "Already have an account? " : "Don't have an account? "}
+            </Typography>
+            <Button
+              variant="text"
+              color="primary"
+              onClick={() => setIsSignUp(!isSignUp)}
+              sx={{
+                textTransform: "none",
+                fontSize: "0.875rem",
+                fontWeight: 500,
+                p: 0,
+                minWidth: "auto",
+                "&:hover": { bgcolor: "transparent", textDecoration: "underline" }
+              }}
+            >
+              {isSignUp ? "Sign In" : "Sign Up"}
+            </Button>
+          </Box>
 
           <Box sx={{ mt: 4, textAlign: "center" }}>
             <Typography variant="body2" color="text.secondary" mb={2}>
