@@ -1,11 +1,31 @@
 import type { AppProps } from 'next/app';
-import { AuthProvider } from '../components/AuthProvider';
+import { SessionProvider } from 'next-auth/react';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline';
 import '../styles/globals.css';
 
-export default function App({ Component, pageProps }: AppProps) {
+// Create Material UI theme
+const theme = createTheme({
+  palette: {
+    primary: {
+      main: '#2196f3',
+    },
+    secondary: {
+      main: '#21cbf3',
+    },
+  },
+});
+
+export default function App({
+  Component,
+  pageProps: { session, ...pageProps },
+}: AppProps) {
   return (
-    <AuthProvider>
-      <Component {...pageProps} />
-    </AuthProvider>
+    <SessionProvider session={session}>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <Component {...pageProps} />
+      </ThemeProvider>
+    </SessionProvider>
   );
 }

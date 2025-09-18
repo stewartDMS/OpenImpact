@@ -2,7 +2,8 @@ import { Box, Container, Typography, Button, Grid, Paper } from "@mui/material";
 import EnergySavingsLeafIcon from "@mui/icons-material/EnergySavingsLeaf";
 import LanguageIcon from "@mui/icons-material/Language";
 import InsightsIcon from "@mui/icons-material/Insights";
-import Link from "next/link";
+import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/router';
 
 const features = [
   {
@@ -23,6 +24,17 @@ const features = [
 ];
 
 export default function Home() {
+  const { data: session } = useSession();
+  const router = useRouter();
+
+  const handleGetStarted = () => {
+    if (session) {
+      router.push('/dashboard');
+    } else {
+      router.push('/auth');
+    }
+  };
+
   return (
     <Box sx={{
       minHeight: "100vh",
@@ -44,24 +56,28 @@ export default function Home() {
           <Typography variant="h5" color="inherit" sx={{ mb: 4 }}>
             An open-source platform to explore, analyze, and share social and environmental impact data.
           </Typography>
-          <Link href="/auth">
-            <Button
-              variant="contained"
-              size="large"
-              sx={{
-                bgcolor: "#fff",
-                color: "#2196f3",
-                fontWeight: 600,
-                px: 5,
-                py: 1.5,
-                fontSize: "1.15rem",
-                boxShadow: 2,
-                "&:hover": { bgcolor: "#e3f2fd" },
-              }}
-            >
-              Get Started
-            </Button>
-          </Link>
+          {session && (
+            <Typography variant="h6" color="inherit" sx={{ mb: 3, opacity: 0.9 }}>
+              Welcome back, {session.user?.name || session.user?.email}!
+            </Typography>
+          )}
+          <Button
+            onClick={handleGetStarted}
+            variant="contained"
+            size="large"
+            sx={{
+              bgcolor: "#fff",
+              color: "#2196f3",
+              fontWeight: 600,
+              px: 5,
+              py: 1.5,
+              fontSize: "1.15rem",
+              boxShadow: 2,
+              "&:hover": { bgcolor: "#e3f2fd" },
+            }}
+          >
+            {session ? 'Go to Dashboard' : 'Get Started'}
+          </Button>
         </Container>
       </Box>
 
@@ -91,6 +107,26 @@ export default function Home() {
           ))}
         </Grid>
       </Container>
+
+      {/* Call to Action Section */}
+      {!session && (
+        <Container sx={{ py: { xs: 4, md: 6 }, textAlign: "center" }}>
+          <Typography variant="h5" fontWeight={600} gutterBottom>
+            Ready to make an impact?
+          </Typography>
+          <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
+            Join our community and start exploring impactful data today.
+          </Typography>
+          <Button
+            onClick={() => router.push('/auth')}
+            variant="contained"
+            size="large"
+            sx={{ px: 4, py: 1.5 }}
+          >
+            Sign In Now
+          </Button>
+        </Container>
+      )}
 
       {/* Footer */}
       <Box sx={{
