@@ -1,7 +1,7 @@
 import { Box, Container, Typography, Button, Paper, Grid } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import { useAuth } from "../lib/auth";
+import { useSession, signOut } from "next-auth/react";
 import Dashboard from "../components/Dashboard";
 import DataInputForm from "../components/DataInputForm";
 
@@ -9,27 +9,41 @@ type Datum = { title: string; value: string };
 
 export default function DashboardPage() {
   const [data, setData] = useState<Datum[]>([]);
-  const { user, logout, isAuthenticated } = useAuth();
+  const { data: session, status } = useSession();
   const router = useRouter();
 
   // Redirect to auth if not authenticated
   useEffect(() => {
-    if (!isAuthenticated) {
+    if (status === "loading") return; // Still loading
+    if (!session) {
       router.push("/auth");
     }
-  }, [isAuthenticated, router]);
+  }, [session, status, router]);
 
-  const handleLogout = () => {
-    logout();
-    router.push("/");
+  const handleLogout = async () => {
+    await signOut({ callbackUrl: "/" });
   };
 
   const handleAddData = (newData: Datum) => {
     setData(prev => [...prev, newData]);
   };
 
-  // Show loading while redirecting
-  if (!isAuthenticated || !user) {
+  // Show loading while checking authentication
+  if (status === "loading") {
+    return (
+      <Box sx={{
+        minHeight: "100vh",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+      }}>
+        <Typography>Loading...</Typography>
+      </Box>
+    );
+  }
+
+  // Show nothing while redirecting
+  if (!session) {
     return null;
   }
 
@@ -59,7 +73,7 @@ export default function DashboardPage() {
             <Grid item xs={12} md={6}>
               <Typography variant="h6" mb={2}>Your Dashboard</Typography>
               <Dashboard 
-                username={user.username} 
+                username={session.user?.name || session.user?.email || 'User'} 
                 data={data} 
                 onLogout={handleLogout} 
               />

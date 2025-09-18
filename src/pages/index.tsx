@@ -2,27 +2,31 @@ import { Box, Container, Typography, Button, Grid, Paper } from "@mui/material";
 import EnergySavingsLeafIcon from "@mui/icons-material/EnergySavingsLeaf";
 import LanguageIcon from "@mui/icons-material/Language";
 import InsightsIcon from "@mui/icons-material/Insights";
-import Link from "next/link";
+import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/router';
 
 const features = [
   {
-    icon: <EnergySavingsLeafIcon color="success" sx={{ fontSize: 40 }} />, 
-    title: "Sustainable Data",
-    desc: "Curate and share impactful environmental and social datasets.",
+    icon: <EnergySavingsLeafIcon color="primary" sx={{ fontSize: 48 }} />,
+    title: "Sustainability",
+    description: "Analyze and showcase your organization's social and environmental impact."
   },
   {
-    icon: <LanguageIcon color="primary" sx={{ fontSize: 40 }} />, 
-    title: "Open Collaboration",
-    desc: "Work openly, collaborate globally for better outcomes.",
+    icon: <LanguageIcon color="primary" sx={{ fontSize: 48 }} />,
+    title: "Open Data",
+    description: "Explore and contribute to a public repository of impactful data."
   },
   {
-    icon: <InsightsIcon color="secondary" sx={{ fontSize: 40 }} />, 
-    title: "Powerful Insights",
-    desc: "Generate and visualize insights to drive positive change.",
-  },
+    icon: <InsightsIcon color="primary" sx={{ fontSize: 48 }} />,
+    title: "Insights",
+    description: "Gain actionable insights through easy-to-use analytics tools."
+  }
 ];
 
 export default function Home() {
+  const { data: session } = useSession();
+  const router = useRouter();
+
   return (
     <Box sx={{
       minHeight: "100vh",
@@ -44,24 +48,23 @@ export default function Home() {
           <Typography variant="h5" color="inherit" sx={{ mb: 4 }}>
             An open-source platform to explore, analyze, and share social and environmental impact data.
           </Typography>
-          <Link href="/auth">
-            <Button
-              variant="contained"
-              size="large"
-              sx={{
-                bgcolor: "#fff",
-                color: "#2196f3",
-                fontWeight: 600,
-                px: 5,
-                py: 1.5,
-                fontSize: "1.15rem",
-                boxShadow: 2,
-                "&:hover": { bgcolor: "#e3f2fd" },
-              }}
-            >
-              Get Started
-            </Button>
-          </Link>
+          <Button
+            onClick={() => router.push(session ? '/dashboard' : '/auth')}
+            variant="contained"
+            size="large"
+            sx={{
+              bgcolor: "#fff",
+              color: "#2196f3",
+              fontWeight: 600,
+              px: 5,
+              py: 1.5,
+              fontSize: "1.15rem",
+              boxShadow: 2,
+              "&:hover": { bgcolor: "#e3f2fd" },
+            }}
+          >
+            {session ? 'Go to Dashboard' : 'Get Started'}
+          </Button>
         </Container>
       </Box>
 
@@ -71,8 +74,8 @@ export default function Home() {
           Why Open Impact?
         </Typography>
         <Grid container spacing={4} justifyContent="center">
-          {features.map((f, i) => (
-            <Grid item xs={12} md={4} key={i}>
+          {features.map((feature, idx) => (
+            <Grid item xs={12} md={4} key={idx}>
               <Paper elevation={4} sx={{
                 p: 4,
                 textAlign: "center",
@@ -81,16 +84,37 @@ export default function Home() {
                 transition: "transform 0.2s",
                 "&:hover": { transform: "translateY(-8px)", boxShadow: 8 }
               }}>
-                <Box mb={2}>{f.icon}</Box>
+                <Box mb={2}>{feature.icon}</Box>
                 <Typography variant="h6" fontWeight={700} mb={1}>
-                  {f.title}
+                  {feature.title}
                 </Typography>
-                <Typography color="text.secondary">{f.desc}</Typography>
+                <Typography color="text.secondary">{feature.description}</Typography>
               </Paper>
             </Grid>
           ))}
         </Grid>
       </Container>
+
+      {/* Welcome section for authenticated users */}
+      {session && (
+        <Container maxWidth="md" sx={{ mb: 6 }}>
+          <Paper elevation={2} sx={{ p: 4, textAlign: "center", borderRadius: 3 }}>
+            <Typography variant="h5" fontWeight={700} mb={2} color="primary">
+              Welcome back, {session.user?.name || session.user?.email}!
+            </Typography>
+            <Typography variant="body1" color="text.secondary" mb={3}>
+              Ready to explore your impact data and insights?
+            </Typography>
+            <Button
+              variant="contained"
+              size="large"
+              onClick={() => router.push('/dashboard')}
+            >
+              Open Dashboard
+            </Button>
+          </Paper>
+        </Container>
+      )}
 
       {/* Footer */}
       <Box sx={{
