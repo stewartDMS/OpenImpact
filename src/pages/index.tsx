@@ -1,229 +1,120 @@
-import { useState, useEffect } from 'react'
-import { signIn, signOut, useSession } from 'next-auth/react'
-import { 
-  Box, 
-  Container, 
-  Typography, 
-  Button, 
-  TextField, 
-  Paper, 
-  Stack, 
-  Alert,
-  Divider,
-  CircularProgress
-} from '@mui/material'
-import { Google as GoogleIcon } from '@mui/icons-material'
-import { useRouter } from 'next/router'
+import { Box, Container, Typography, Button, Grid, Paper, Stack } from "@mui/material";
+import EnergySavingsLeafIcon from "@mui/icons-material/EnergySavingsLeaf";
+import LanguageIcon from "@mui/icons-material/Language";
+import InsightsIcon from "@mui/icons-material/Insights";
+import { useState } from "react";
+import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/router';
 
-export default function AuthPage() {
-  const { data: session, status } = useSession()
-  const router = useRouter()
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [error, setError] = useState('')
-  const [loading, setLoading] = useState(false)
-
-  // Handle successful authentication redirect
-  useEffect(() => {
-    if (session && router.query.callbackUrl) {
-      router.push(router.query.callbackUrl)
-    }
-  }, [session, router])
-
-  const handleGoogleSignIn = async () => {
-    setError('')
-    setLoading(true)
-    try {
-      await signIn('google', { callbackUrl: '/' })
-    } catch (err) {
-      setError('Failed to sign in with Google')
-    } finally {
-      setLoading(false)
-    }
+const features = [
+  {
+    icon: <EnergySavingsLeafIcon color="primary" sx={{ fontSize: 48 }} />,
+    title: "Sustainability",
+    description: "Analyze and showcase your organization’s social and environmental impact."
+  },
+  {
+    icon: <LanguageIcon color="primary" sx={{ fontSize: 48 }} />,
+    title: "Open Data",
+    description: "Explore and contribute to a public repository of impactful data."
+  },
+  {
+    icon: <InsightsIcon color="primary" sx={{ fontSize: 48 }} />,
+    title: "Insights",
+    description: "Gain actionable insights through easy-to-use analytics tools."
   }
+];
 
-  const handleCredentialsSignIn = async (e) => {
-    e.preventDefault()
-    setError('')
-    setLoading(true)
+export default function Home() {
+  const [username, setUsername] = useState("");
+  const [error, setError] = useState("");
+  const { data: session } = useSession();
+  const router = useRouter();
 
-    if (!email.trim() || !password.trim()) {
-      setError('Please fill in all fields')
-      setLoading(false)
-      return
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!username.trim()) {
+      setError("Username is required.");
+      return;
     }
+    setError("");
+    // TODO: Add actual login logic here
+  };
 
-    try {
-      const result = await signIn('credentials', {
-        email,
-        password,
-        redirect: false,
-      })
-
-      if (result?.error) {
-        setError('Invalid email or password')
-      } else if (result?.ok) {
-        router.push('/')
-      }
-    } catch (err) {
-      setError('An error occurred during sign in')
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const handleSignOut = async () => {
-    await signOut({ callbackUrl: '/' })
-  }
-
-  // Loading state
-  if (status === 'loading') {
-    return (
-      <Box sx={{
-        minHeight: '100vh',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        bgcolor: 'background.default'
-      }}>
-        <CircularProgress />
-      </Box>
-    )
-  }
-
-  // Already signed in
-  if (session) {
-    return (
-      <Box sx={{
-        minHeight: '100vh',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        bgcolor: 'linear-gradient(135deg, #e3f2fd 0%, #ffffff 100%)'
-      }}>
-        <Container maxWidth="xs">
-          <Paper elevation={6} sx={{ p: 4, borderRadius: 3, textAlign: 'center' }}>
-            <Typography variant="h4" fontWeight={700} mb={2} color="primary">
-              Welcome to Open Impact!
-            </Typography>
-            <Typography variant="body1" color="text.secondary" mb={3}>
-              Hello, {session.user?.name || session.user?.email}! You&apos;re successfully signed in.
-            </Typography>
-            <Stack spacing={2}>
-              <Button
-                variant="contained"
-                size="large"
-                onClick={() => router.push('/')}
-                sx={{ mb: 1 }}
-              >
-                Go to Dashboard
-              </Button>
-              <Button
-                variant="outlined"
-                size="large"
-                onClick={handleSignOut}
-                disabled={loading}
-              >
-                Sign Out
-              </Button>
-            </Stack>
-          </Paper>
+  return (
+    <>
+      <Box sx={{ bgcolor: "#e3f2fd", pt: 8, pb: 6 }}>
+        <Container maxWidth="md">
+          <Typography variant="h2" align="center" fontWeight={700} color="primary" gutterBottom>
+            Open Impact
+          </Typography>
+          <Typography variant="h5" align="center" color="text.secondary" paragraph>
+            An open-source platform to explore, analyze, and share social and environmental impact data.
+          </Typography>
+          <Button
+            onClick={() => router.push('/auth')}
+            variant="contained"
+            size="large"
+            sx={{ display: "block", mx: "auto", mt: 3, mb: 2 }}
+          >
+            {session ? 'Go to Dashboard' : 'Get Started'}
+          </Button>
         </Container>
       </Box>
-    )
-  }
 
-  // Sign in form
-  return (
-    <Box sx={{
-      minHeight: '100vh',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      bgcolor: 'linear-gradient(135deg, #e3f2fd 0%, #ffffff 100%)'
-    }}>
-      <Container maxWidth="xs">
-        <Paper elevation={6} sx={{ p: 4, borderRadius: 3 }}>
-          <Typography variant="h4" fontWeight={700} align="center" mb={1} color="primary">
-            Sign In
+      <Container sx={{ py: { xs: 6, md: 10 } }}>
+        <Grid container spacing={4} justifyContent="center">
+          {features.map((feature, idx) => (
+            <Grid item xs={12} md={4} key={idx}>
+              <Paper elevation={4} sx={{ p: 3, textAlign: "center" }}>
+                {feature.icon}
+                <Typography variant="h6" fontWeight={700} mt={2}>
+                  {feature.title}
+                </Typography>
+                <Typography variant="body2" color="text.secondary" mt={1}>
+                  {feature.description}
+                </Typography>
+              </Paper>
+            </Grid>
+          ))}
+        </Grid>
+      </Container>
+
+      {/* Login section */}
+      <Container maxWidth="xs" sx={{ mb: 10 }}>
+        <Paper elevation={6} sx={{ p: 4, borderRadius: 3, mt: 4 }}>
+          <Typography variant="h5" fontWeight={700} align="center" mb={2}>
+            Login to Get Started
           </Typography>
-          <Typography variant="body2" align="center" color="text.secondary" mb={4}>
-            Welcome to Open Impact
-          </Typography>
-
-          {error && (
-            <Alert severity="error" sx={{ mb: 3 }}>
-              {error}
-            </Alert>
-          )}
-
-          {/* Google Sign In */}
-          <Button
-            fullWidth
-            variant="outlined"
-            size="large"
-            startIcon={<GoogleIcon />}
-            onClick={handleGoogleSignIn}
-            disabled={loading}
-            sx={{
-              mb: 3,
-              py: 1.5,
-              borderColor: '#db4437',
-              color: '#db4437',
-              '&:hover': {
-                borderColor: '#c23321',
-                bgcolor: 'rgba(219, 68, 55, 0.04)'
-              }
-            }}
-          >
-            {loading ? <CircularProgress size={20} /> : 'Continue with Google'}
-          </Button>
-
-          <Divider sx={{ mb: 3 }}>
-            <Typography variant="body2" color="text.secondary">
-              or
-            </Typography>
-          </Divider>
-
-          {/* Email/Password Form */}
-          <form onSubmit={handleCredentialsSignIn}>
-            <Stack spacing={3}>
-              <TextField
-                fullWidth
-                label="Email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                disabled={loading}
-                autoComplete="email"
+          <form onSubmit={handleLogin}>
+            <Stack spacing={2}>
+              <input
+                style={{
+                  padding: "12px",
+                  borderRadius: "6px",
+                  border: "1px solid #bdbdbd",
+                  fontSize: "1rem",
+                  width: "100%",
+                }}
+                placeholder="Enter username"
+                value={username}
+                onChange={e => {
+                  setUsername((e.target as HTMLInputElement).value);
+                  if (error) setError("");
+                }}
+                autoFocus
               />
-              <TextField
-                fullWidth
-                label="Password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                disabled={loading}
-                autoComplete="current-password"
-              />
-              <Button
-                type="submit"
-                fullWidth
-                variant="contained"
-                size="large"
-                disabled={loading}
-                sx={{ py: 1.5 }}
-              >
-                {loading ? <CircularProgress size={20} /> : 'Sign In'}
+              {error && (
+                <Typography color="error" fontSize={14} align="left">
+                  {error}
+                </Typography>
+              )}
+              <Button type="submit" variant="contained" size="large">
+                Log In
               </Button>
             </Stack>
           </form>
-
-          <Typography variant="body2" align="center" color="text.secondary" sx={{ mt: 3 }}>
-            For demo purposes, any email/password combination will work
-          </Typography>
         </Paper>
       </Container>
-    </Box>
-  )
+    </>
+  );
 }
