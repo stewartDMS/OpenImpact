@@ -10,7 +10,7 @@ Empower everyone—investors, media, regulators, students, and companies—to fr
 
 ## Features
 
-- 🔑 **Sign-In Functions** (Firebase Auth)
+- 🔑 **Authentication** (NextAuth.js with Sign In/Sign Up)
 - 🗺️ **Interactive Global Dashboard** (by country, industry, sector, company)
 - 🌐 **Open Data Integrations**: World Bank, OECD, Transparency International, SEC/EDGAR, ASX, etc.
 - 🧠 **AI Analytics**: Natural language insights, benchmarking, and report automation (OpenAI, Claude, etc.)
@@ -82,11 +82,16 @@ Empower everyone—investors, media, regulators, students, and companies—to fr
 
 ## Authentication
 
-The application uses NextAuth.js for secure authentication with multiple providers:
+The application uses NextAuth.js for secure authentication with multiple providers supporting both sign-in and sign-up:
 
 - **GitHub OAuth**: Perfect for developers and tech-savvy users
 - **Google OAuth**: Easy sign-in for general users  
 - **Email (Magic Links)**: Passwordless authentication via email
+
+### User Experience
+- Clean toggle between **Sign In** and **Sign Up** modes
+- Same providers work for both authentication flows
+- Consistent Material UI design and user experience
 
 ### Setting up OAuth Providers
 
@@ -147,7 +152,7 @@ Contributions are welcome! See [`CONTRIBUTING.md`](CONTRIBUTING.md).
 ## TODO / Backlog
 
 - [ ] Integrate first open data API (World Bank)
-- [ ] Set up Firebase authentication
+- [ ] Set up enhanced authentication features
 - [ ] Build baseline dashboard UI
 - [ ] Add AI insights endpoint (OpenAI/Claude)
 - [ ] Set up company onboarding API flow
