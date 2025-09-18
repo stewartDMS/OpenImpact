@@ -1,35 +1,60 @@
-import { Box, Container, Typography, Button, Stack, Paper } from "@mui/material";
-import { useState, useEffect } from "react";
+import { Box, Container, Typography, Button, Stack, Paper, Divider } from "@mui/material";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
-import { useAuth } from "../lib/auth";
+import { useSession, signIn } from "next-auth/react";
+import GitHubIcon from "@mui/icons-material/GitHub";
+import EmailIcon from "@mui/icons-material/Email";
 
+/**
+ * Authentication page using NextAuth.js
+ * 
+ * Provides sign-in options for:
+ * - GitHub OAuth (developer-friendly)
+ * - Google OAuth (general users) 
+ * - Email magic links (passwordless)
+ * 
+ * Automatically redirects authenticated users to dashboard.
+ */
 export default function Auth() {
-  const [username, setUsername] = useState("");
-  const [error, setError] = useState("");
-  const { login, isAuthenticated } = useAuth();
+  const { data: session, status } = useSession();
   const router = useRouter();
+  const [isLoading, setIsLoading] = useState("");
 
   // Redirect to dashboard if already authenticated
   useEffect(() => {
-    if (isAuthenticated) {
+    if (session) {
       router.push("/dashboard");
     }
-  }, [isAuthenticated, router]);
+  }, [session, router]);
 
-  const handleLogin = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!username.trim()) {
-      setError("Username is required.");
-      return;
+  // Handle provider sign-in with loading state
+  const handleSignIn = async (provider: string) => {
+    setIsLoading(provider);
+    try {
+      await signIn(provider, { callbackUrl: "/dashboard" });
+    } catch (error) {
+      console.error("Sign-in error:", error);
+      setIsLoading("");
     }
-    setError("");
-    login(username.trim());
-    router.push("/dashboard");
   };
 
-  // Show loading or nothing while redirecting
-  if (isAuthenticated) {
+  // Show loading while checking session
+  if (status === "loading") {
+    return (
+      <Box sx={{
+        minHeight: "100vh",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+      }}>
+        <Typography>Loading...</Typography>
+      </Box>
+    );
+  }
+
+  // Don't render if already authenticated (will redirect)
+  if (session) {
     return null;
   }
 
@@ -51,36 +76,74 @@ export default function Auth() {
             Sign in to access your dashboard
           </Typography>
           
-          <form onSubmit={handleLogin}>
-            <Stack spacing={2}>
-              <input
-                style={{
-                  padding: "12px",
-                  borderRadius: "6px",
-                  border: "1px solid #bdbdbd",
-                  fontSize: "1rem",
-                  width: "100%",
-                }}
-                placeholder="Enter username"
-                value={username}
-                onChange={e => {
-                  setUsername(e.target.value);
-                  if (error) setError("");
-                }}
-                autoFocus
-              />
-              {error && (
-                <Typography color="error" fontSize={14} align="left">
-                  {error}
-                </Typography>
-              )}
-              <Button type="submit" variant="contained" size="large">
-                Sign In
-              </Button>
-            </Stack>
-          </form>
+          <Stack spacing={3}>
+            {/* GitHub Sign In */}
+            <Button
+              variant="contained"
+              size="large"
+              fullWidth
+              onClick={() => handleSignIn("github")}
+              disabled={isLoading !== ""}
+              startIcon={<GitHubIcon />}
+              sx={{
+                bgcolor: "#24292e",
+                "&:hover": { bgcolor: "#1a1e22" },
+                textTransform: "none",
+                fontSize: "1rem",
+              }}
+            >
+              {isLoading === "github" ? "Signing in..." : "Continue with GitHub"}
+            </Button>
 
-          <Box sx={{ mt: 3, textAlign: "center" }}>
+            {/* Google Sign In */}
+            <Button
+              variant="outlined"
+              size="large"
+              fullWidth
+              onClick={() => handleSignIn("google")}
+              disabled={isLoading !== ""}
+              startIcon={
+                <Box
+                  component="img"
+                  src="https://developers.google.com/identity/images/g-logo.png"
+                  alt="Google"
+                  sx={{ width: 20, height: 20 }}
+                />
+              }
+              sx={{
+                textTransform: "none",
+                fontSize: "1rem",
+                borderColor: "#dadce0",
+                color: "#3c4043",
+                "&:hover": { borderColor: "#1976d2", bgcolor: "#f8f9fa" },
+              }}
+            >
+              {isLoading === "google" ? "Signing in..." : "Continue with Google"}
+            </Button>
+
+            <Divider sx={{ my: 2 }}>or</Divider>
+
+            {/* Email Sign In */}
+            <Button
+              variant="outlined"
+              size="large"
+              fullWidth
+              onClick={() => handleSignIn("email")}
+              disabled={isLoading !== ""}
+              startIcon={<EmailIcon />}
+              sx={{
+                textTransform: "none",
+                fontSize: "1rem",
+              }}
+            >
+              {isLoading === "email" ? "Sending magic link..." : "Sign in with Email"}
+            </Button>
+          </Stack>
+
+          <Box sx={{ mt: 4, textAlign: "center" }}>
+            <Typography variant="body2" color="text.secondary" mb={2}>
+              Secure authentication powered by NextAuth.js
+            </Typography>
             <Link href="/" passHref>
               <Button variant="text" color="primary">
                 ← Back to Home
