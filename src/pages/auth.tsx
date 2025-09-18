@@ -9,10 +9,15 @@ import EmailIcon from "@mui/icons-material/Email";
 /**
  * Authentication page using NextAuth.js
  * 
- * Provides sign-in options for:
+ * Provides both sign-in and sign-up options with toggle functionality:
  * - GitHub OAuth (developer-friendly)
  * - Google OAuth (general users) 
  * - Email magic links (passwordless)
+ * 
+ * Features:
+ * - Toggle between Sign In and Sign Up modes
+ * - Dynamic UI text based on selected mode
+ * - Loading states for authentication attempts
  * 
  * Automatically redirects authenticated users to dashboard.
  */
@@ -20,6 +25,7 @@ export default function Auth() {
   const { data: session, status } = useSession();
   const router = useRouter();
   const [isLoading, setIsLoading] = useState("");
+  const [isSignUp, setIsSignUp] = useState(false);
 
   // Redirect to dashboard if already authenticated
   useEffect(() => {
@@ -28,15 +34,23 @@ export default function Auth() {
     }
   }, [session, router]);
 
-  // Handle provider sign-in with loading state
-  const handleSignIn = async (provider: string) => {
+  // Handle provider sign-in/sign-up with loading state
+  const handleAuth = async (provider: string) => {
     setIsLoading(provider);
     try {
+      // NextAuth.js handles both sign-in and sign-up automatically
+      // For OAuth providers, signing up is the same as signing in
       await signIn(provider, { callbackUrl: "/dashboard" });
     } catch (error) {
-      console.error("Sign-in error:", error);
+      console.error("Authentication error:", error);
       setIsLoading("");
     }
+  };
+
+  // Toggle between sign-in and sign-up modes
+  const toggleMode = () => {
+    setIsSignUp(!isSignUp);
+    setIsLoading(""); // Clear any loading state when switching modes
   };
 
   // Show loading while checking session
@@ -70,19 +84,19 @@ export default function Auth() {
       <Container maxWidth="xs">
         <Paper elevation={6} sx={{ p: 4, borderRadius: 3 }}>
           <Typography variant="h4" fontWeight={700} align="center" mb={1}>
-            Welcome to Open Impact
+            {isSignUp ? "Join Open Impact" : "Welcome to Open Impact"}
           </Typography>
           <Typography variant="body1" color="text.secondary" align="center" mb={4}>
-            Sign in to access your dashboard
+            {isSignUp ? "Create your account to get started" : "Sign in to access your dashboard"}
           </Typography>
           
           <Stack spacing={3}>
-            {/* GitHub Sign In */}
+            {/* GitHub Sign In/Up */}
             <Button
               variant="contained"
               size="large"
               fullWidth
-              onClick={() => handleSignIn("github")}
+              onClick={() => handleAuth("github")}
               disabled={isLoading !== ""}
               startIcon={<GitHubIcon />}
               sx={{
@@ -92,15 +106,17 @@ export default function Auth() {
                 fontSize: "1rem",
               }}
             >
-              {isLoading === "github" ? "Signing in..." : "Continue with GitHub"}
+              {isLoading === "github" 
+                ? (isSignUp ? "Creating account..." : "Signing in...") 
+                : `Continue with GitHub`}
             </Button>
 
-            {/* Google Sign In */}
+            {/* Google Sign In/Up */}
             <Button
               variant="outlined"
               size="large"
               fullWidth
-              onClick={() => handleSignIn("google")}
+              onClick={() => handleAuth("google")}
               disabled={isLoading !== ""}
               startIcon={
                 <Box
@@ -118,17 +134,19 @@ export default function Auth() {
                 "&:hover": { borderColor: "#1976d2", bgcolor: "#f8f9fa" },
               }}
             >
-              {isLoading === "google" ? "Signing in..." : "Continue with Google"}
+              {isLoading === "google" 
+                ? (isSignUp ? "Creating account..." : "Signing in...") 
+                : `Continue with Google`}
             </Button>
 
             <Divider sx={{ my: 2 }}>or</Divider>
 
-            {/* Email Sign In */}
+            {/* Email Sign In/Up */}
             <Button
               variant="outlined"
               size="large"
               fullWidth
-              onClick={() => handleSignIn("email")}
+              onClick={() => handleAuth("email")}
               disabled={isLoading !== ""}
               startIcon={<EmailIcon />}
               sx={{
@@ -136,9 +154,30 @@ export default function Auth() {
                 fontSize: "1rem",
               }}
             >
-              {isLoading === "email" ? "Sending magic link..." : "Sign in with Email"}
+              {isLoading === "email" 
+                ? "Sending magic link..." 
+                : (isSignUp ? "Sign up with Email" : "Sign in with Email")}
             </Button>
           </Stack>
+
+          {/* Toggle between Sign In and Sign Up */}
+          <Box sx={{ mt: 3, textAlign: "center" }}>
+            <Typography variant="body2" color="text.secondary" mb={1}>
+              {isSignUp ? "Already have an account?" : "Don't have an account?"}
+            </Typography>
+            <Button 
+              variant="text" 
+              color="primary" 
+              onClick={toggleMode}
+              sx={{ 
+                textTransform: "none",
+                fontSize: "0.95rem",
+                fontWeight: 600
+              }}
+            >
+              {isSignUp ? "Sign In" : "Sign Up"}
+            </Button>
+          </Box>
 
           <Box sx={{ mt: 4, textAlign: "center" }}>
             <Typography variant="body2" color="text.secondary" mb={2}>
