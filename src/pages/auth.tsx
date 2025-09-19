@@ -147,6 +147,25 @@ export default function Auth() {
               {isLoading === "google" ? "Signing in..." : `Continue with Google`}
             </Button>
 
+            {/* GitHub Sign In */}
+            <Button
+              variant="outlined"
+              size="large"
+              fullWidth
+              onClick={() => handleSignIn("github")}
+              disabled={isLoading !== ""}
+              startIcon={<GitHubIcon />}
+              sx={{
+                textTransform: "none",
+                fontSize: "1rem",
+                borderColor: "#24292e",
+                color: "#24292e",
+                "&:hover": { borderColor: "#1976d2", bgcolor: "#f8f9fa" },
+              }}
+            >
+              {isLoading === "github" ? "Signing in..." : `Continue with GitHub`}
+            </Button>
+
             {/* Divider and Email/Password */}
             <Divider sx={{ my: 2 }}>or</Divider>
 

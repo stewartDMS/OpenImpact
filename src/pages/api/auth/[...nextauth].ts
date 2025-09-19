@@ -1,48 +1,33 @@
 import NextAuth from "next-auth"
-import GithubProvider from "next-auth/providers/github"
-import GoogleProvider from "next-auth/providers/google"
-import EmailProvider from "next-auth/providers/email"
+import GitHub from "next-auth/providers/github"
+import Google from "next-auth/providers/google"
 
 /**
- * NextAuth.js v4 configuration for OpenImpact application
+ * NextAuth.js v5 configuration for OpenImpact application
  * 
  * Configures authentication providers:
  * - GitHub OAuth (for developer/tech users)
  * - Google OAuth (for general users)
- * - Email (passwordless magic link authentication)
+ * 
+ * Note: Email provider removed as it requires a database adapter in v5
  * 
  * Environment variables required:
- * - GITHUB_ID, GITHUB_SECRET
- * - GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET  
- * - EMAIL_SERVER_HOST, EMAIL_SERVER_PORT, EMAIL_SERVER_USER, EMAIL_SERVER_PASSWORD
- * - EMAIL_FROM
+ * - AUTH_GITHUB_ID, AUTH_GITHUB_SECRET (or GITHUB_ID, GITHUB_SECRET for backward compatibility)
+ * - AUTH_GOOGLE_CLIENT_ID, AUTH_GOOGLE_CLIENT_SECRET (or GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET)
  * - NEXTAUTH_URL, NEXTAUTH_SECRET
  */
-export default NextAuth({
+const handler = NextAuth({
   providers: [
     // GitHub OAuth Provider
-    GithubProvider({
-      clientId: process.env.GITHUB_ID || "demo_github_id",
-      clientSecret: process.env.GITHUB_SECRET || "demo_github_secret",
+    GitHub({
+      clientId: process.env.AUTH_GITHUB_ID || process.env.GITHUB_ID || "demo_github_id",
+      clientSecret: process.env.AUTH_GITHUB_SECRET || process.env.GITHUB_SECRET || "demo_github_secret",
     }),
     
     // Google OAuth Provider
-    GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID || "demo_google_id",
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET || "demo_google_secret",
-    }),
-    
-    // Email Provider (Magic Links)
-    EmailProvider({
-      server: {
-        host: process.env.EMAIL_SERVER_HOST || "smtp.gmail.com",
-        port: Number(process.env.EMAIL_SERVER_PORT) || 587,
-        auth: {
-          user: process.env.EMAIL_SERVER_USER || "demo_user",
-          pass: process.env.EMAIL_SERVER_PASSWORD || "demo_password",
-        },
-      },
-      from: process.env.EMAIL_FROM || "noreply@openimpact.org",
+    Google({
+      clientId: process.env.AUTH_GOOGLE_CLIENT_ID || process.env.GOOGLE_CLIENT_ID || "demo_google_id",
+      clientSecret: process.env.AUTH_GOOGLE_CLIENT_SECRET || process.env.GOOGLE_CLIENT_SECRET || "demo_google_secret",
     }),
   ],
   
@@ -81,3 +66,6 @@ export default NextAuth({
   // Enable debug messages in development
   debug: process.env.NODE_ENV === "development",
 })
+
+export { handler as GET, handler as POST }
+export default handler
