@@ -1,7 +1,6 @@
 import NextAuth from "next-auth"
 import GithubProvider from "next-auth/providers/github"
 import GoogleProvider from "next-auth/providers/google"
-import EmailProvider from "next-auth/providers/email"
 
 /**
  * NextAuth.js v4 configuration for OpenImpact application
@@ -9,13 +8,10 @@ import EmailProvider from "next-auth/providers/email"
  * Configures authentication providers:
  * - GitHub OAuth (for developer/tech users)
  * - Google OAuth (for general users)
- * - Email (passwordless magic link authentication)
  * 
  * Environment variables required:
  * - GITHUB_ID, GITHUB_SECRET
  * - GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET  
- * - EMAIL_SERVER_HOST, EMAIL_SERVER_PORT, EMAIL_SERVER_USER, EMAIL_SERVER_PASSWORD
- * - EMAIL_FROM
  * - NEXTAUTH_URL, NEXTAUTH_SECRET
  */
 export default NextAuth({
@@ -30,19 +26,6 @@ export default NextAuth({
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID || "demo_google_id",
       clientSecret: process.env.GOOGLE_CLIENT_SECRET || "demo_google_secret",
-    }),
-    
-    // Email Provider (Magic Links)
-    EmailProvider({
-      server: {
-        host: process.env.EMAIL_SERVER_HOST || "smtp.gmail.com",
-        port: Number(process.env.EMAIL_SERVER_PORT) || 587,
-        auth: {
-          user: process.env.EMAIL_SERVER_USER || "demo_user",
-          pass: process.env.EMAIL_SERVER_PASSWORD || "demo_password",
-        },
-      },
-      from: process.env.EMAIL_FROM || "noreply@openimpact.org",
     }),
   ],
   
