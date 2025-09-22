@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Box, TextField, Button, Alert, Stack } from "@mui/material";
 
 type DataInputFormProps = {
   onAdd: (data: { title: string; value: string }) => void;
@@ -22,31 +23,43 @@ const DataInputForm: React.FC<DataInputFormProps> = ({ onAdd }) => {
   };
 
   return (
-    <form className="w-full max-w-md mb-4" onSubmit={handleSubmit}>
-      <div className="flex gap-2 mb-2">
-        <input
-          className="border border-gray-300 rounded px-3 py-2 w-1/2"
-          type="text"
-          placeholder="Title"
-          value={title}
-          onChange={e => setTitle(e.target.value)}
-        />
-        <input
-          className="border border-gray-300 rounded px-3 py-2 w-1/2"
-          type="text"
-          placeholder="Value"
-          value={value}
-          onChange={e => setValue(e.target.value)}
-        />
-      </div>
-      {error && <div className="text-red-600 text-sm mb-2">{error}</div>}
-      <button
-        className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
-        type="submit"
-      >
-        Add Data
-      </button>
-    </form>
+    <Box component="form" onSubmit={handleSubmit} sx={{ width: '100%', maxWidth: 400, mb: 2 }}>
+      <Stack spacing={2}>
+        <Stack direction="row" spacing={1}>
+          <TextField
+            size="small"
+            placeholder="Title"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            sx={{ flex: 1 }}
+            variant="outlined"
+          />
+          <TextField
+            size="small"
+            placeholder="Value"
+            value={value}
+            onChange={(e) => setValue(e.target.value)}
+            sx={{ flex: 1 }}
+            variant="outlined"
+          />
+        </Stack>
+        
+        {error && (
+          <Alert severity="error" sx={{ fontSize: '0.875rem' }}>
+            {error}
+          </Alert>
+        )}
+        
+        <Button
+          type="submit"
+          variant="contained"
+          color="success"
+          sx={{ alignSelf: 'flex-start' }}
+        >
+          Add Data
+        </Button>
+      </Stack>
+    </Box>
   );
 };
 

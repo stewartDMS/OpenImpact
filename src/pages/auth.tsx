@@ -46,9 +46,17 @@ export default function Auth() {
     setIsLoading(provider);
     setFeedback({});
     try {
-      await signIn(provider, { callbackUrl: "/dashboard" });
+      const result = await signIn(provider, { callbackUrl: "/dashboard", redirect: false });
+      if (result?.error) {
+        setFeedback({ error: `Sign-in failed: ${result.error}` });
+        setIsLoading("");
+      } else if (result?.url) {
+        // Successful sign-in, NextAuth will handle redirect
+        window.location.href = result.url;
+      }
     } catch (error) {
-      setFeedback({ error: "Sign-in error. Try again." });
+      console.error("Sign-in error:", error);
+      setFeedback({ error: "Sign-in error. Please try again." });
       setIsLoading("");
     }
   };
@@ -58,9 +66,19 @@ export default function Auth() {
     setIsLoading("email");
     setFeedback({});
     try {
-      await signIn("email", { email, callbackUrl: "/dashboard" });
+      const result = await signIn("email", { 
+        email, 
+        callbackUrl: "/dashboard", 
+        redirect: false 
+      });
+      if (result?.error) {
+        setFeedback({ error: `Email sign-in failed: ${result.error}` });
+      } else {
+        setFeedback({ success: "Check your email for a sign-in link!" });
+      }
     } catch (error) {
-      setFeedback({ error: "Email sign-in failed. Check your email." });
+      console.error("Email sign-in error:", error);
+      setFeedback({ error: "Email sign-in failed. Please try again." });
     }
     setIsLoading("");
   };

@@ -1,4 +1,4 @@
-import NextAuth from "next-auth"
+import NextAuth, { NextAuthOptions } from "next-auth"
 import GithubProvider from "next-auth/providers/github"
 import GoogleProvider from "next-auth/providers/google"
 import EmailProvider from "next-auth/providers/email"
@@ -9,7 +9,7 @@ import EmailProvider from "next-auth/providers/email"
  * Configures authentication providers:
  * - GitHub OAuth (for developer/tech users)
  * - Google OAuth (for general users)
- * - Email (passwordless magic link authentication)
+ * - Email (passwordless magic link authentication) - requires database
  * 
  * Environment variables required:
  * - GITHUB_ID, GITHUB_SECRET
@@ -18,7 +18,8 @@ import EmailProvider from "next-auth/providers/email"
  * - EMAIL_FROM
  * - NEXTAUTH_URL, NEXTAUTH_SECRET
  */
-export default NextAuth({
+
+const authOptions: NextAuthOptions = {
   providers: [
     // GitHub OAuth Provider
     GithubProvider({
@@ -32,18 +33,20 @@ export default NextAuth({
       clientSecret: process.env.GOOGLE_CLIENT_SECRET || "demo_google_secret",
     }),
     
-    // Email Provider (Magic Links)
-    EmailProvider({
-      server: {
-        host: process.env.EMAIL_SERVER_HOST || "smtp.gmail.com",
-        port: Number(process.env.EMAIL_SERVER_PORT) || 587,
-        auth: {
-          user: process.env.EMAIL_SERVER_USER || "demo_user",
-          pass: process.env.EMAIL_SERVER_PASSWORD || "demo_password",
+    // Email Provider (Magic Links) - Only enable if properly configured
+    ...(process.env.EMAIL_SERVER_HOST && process.env.EMAIL_SERVER_USER ? [
+      EmailProvider({
+        server: {
+          host: process.env.EMAIL_SERVER_HOST,
+          port: Number(process.env.EMAIL_SERVER_PORT) || 587,
+          auth: {
+            user: process.env.EMAIL_SERVER_USER,
+            pass: process.env.EMAIL_SERVER_PASSWORD,
+          },
         },
-      },
-      from: process.env.EMAIL_FROM || "noreply@openimpact.org",
-    }),
+        from: process.env.EMAIL_FROM || "noreply@openimpact.org",
+      })
+    ] : []),
   ],
   
   // Customize pages for better integration with the app theme
@@ -58,7 +61,7 @@ export default NextAuth({
       // Add custom properties to session if needed
       if (session.user && token.sub) {
         // Add user ID from token to session
-        (session.user as any).id = token.sub
+        session.user.id = token.sub
       }
       return session
     },
@@ -66,9 +69,15 @@ export default NextAuth({
     // The JWT callback is called whenever a JWT is created, updated, or accessed
     async jwt({ token, user, account }) {
       // Persist the OAuth access_token to the token right after signin
-      if (account) {
+      if (account?.access_token) {
         token.accessToken = account.access_token
       }
+      
+      // Persist user id to token on initial sign in
+      if (user) {
+        token.sub = user.id
+      }
+      
       return token
     },
   },
@@ -80,4 +89,6 @@ export default NextAuth({
   
   // Enable debug messages in development
   debug: process.env.NODE_ENV === "development",
-})
+}
+
+export default NextAuth(authOptions)
