@@ -1,11 +1,11 @@
 import React from 'react';
-import CompanyDashboardPage from '../components/company/CompanyDashboardPage';
-import { useRequireAuth } from '../hooks/useRequireAuth';
+import CompanyDashboardPage from '../../components/company/CompanyDashboardPage';
+import { useRequireAuth } from '../../hooks/useRequireAuth';
 
 export default function CompanyDashboard() {
-  const { isLoading } = useRequireAuth();
+  const authState = useRequireAuth();
 
-  if (isLoading) {
+  if (authState.isLoading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">

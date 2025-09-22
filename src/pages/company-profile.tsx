@@ -1,14 +1,14 @@
 import React from 'react';
 import { useRouter } from 'next/router';
-import CompanyProfilePage from '../components/company/CompanyProfilePage';
-import { useRequireAuth } from '../hooks/useRequireAuth';
+import CompanyProfilePage from '../../components/company/CompanyProfilePage';
+import { useRequireAuth } from '../../hooks/useRequireAuth';
 
 export default function CompanyProfile() {
-  const { isLoading } = useRequireAuth();
+  const authState = useRequireAuth();
   const router = useRouter();
   const { companyId } = router.query;
 
-  if (isLoading) {
+  if (authState.isLoading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
@@ -22,5 +22,5 @@ export default function CompanyProfile() {
   // You could fetch company data here based on companyId
   // For now, we'll let the component handle its own data
 
-  return <CompanyProfilePage companyId={companyId} />;
+  return <CompanyProfilePage companyData={null} />;
 }
