@@ -1,4 +1,5 @@
 import React from "react";
+import { Box, Typography, Button, List, ListItem, ListItemText, Paper, Divider } from "@mui/material";
 
 type Datum = { title: string; value: string };
 
@@ -9,30 +10,47 @@ type DashboardProps = {
 };
 
 const Dashboard: React.FC<DashboardProps> = ({ username, data, onLogout }) => (
-  <section className="w-full max-w-xl mx-auto p-4 bg-white rounded shadow">
-    <div className="flex justify-between items-center mb-4">
-      <h2 className="text-xl font-bold">Welcome, {username}!</h2>
-      <button
-        className="text-sm text-gray-500 underline hover:text-gray-800"
+  <Paper elevation={1} sx={{ p: 3, width: '100%', maxWidth: 600, mx: 'auto' }}>
+    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+      <Typography variant="h5" fontWeight={700}>
+        Welcome, {username}!
+      </Typography>
+      <Button
+        variant="text"
+        size="small"
+        color="inherit"
         onClick={onLogout}
+        sx={{ textDecoration: 'underline' }}
       >
         Logout
-      </button>
-    </div>
-    <h3 className="text-lg font-semibold mb-2">Your Data</h3>
+      </Button>
+    </Box>
+    
+    <Typography variant="h6" fontWeight={600} mb={2}>
+      Your Data
+    </Typography>
+    
     {data.length === 0 ? (
-      <div className="text-gray-500">No data added yet.</div>
+      <Typography color="text.secondary">
+        No data added yet.
+      </Typography>
     ) : (
-      <ul className="divide-y">
+      <List>
         {data.map((item, idx) => (
-          <li key={idx} className="py-2 flex justify-between items-center">
-            <span className="font-medium">{item.title}</span>
-            <span className="text-gray-700">{item.value}</span>
-          </li>
+          <React.Fragment key={idx}>
+            <ListItem sx={{ px: 0, py: 1 }}>
+              <ListItemText
+                primary={item.title}
+                secondary={item.value}
+                primaryTypographyProps={{ fontWeight: 500 }}
+              />
+            </ListItem>
+            {idx < data.length - 1 && <Divider />}
+          </React.Fragment>
         ))}
-      </ul>
+      </List>
     )}
-  </section>
+  </Paper>
 );
 
 export default Dashboard;
