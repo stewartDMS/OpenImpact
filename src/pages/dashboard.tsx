@@ -1,9 +1,7 @@
-import { Box, Container, Typography, Button, Paper, Grid } from "@mui/material";
+import { Box, Container, Typography, Button, Paper, Grid, TextField, Alert } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { useSession, signOut } from "next-auth/react";
-import Dashboard from "../components/Dashboard";
-import DataInputForm from "../components/DataInputForm";
 
 type Datum = { title: string; value: string };
 
@@ -18,6 +16,9 @@ type Datum = { title: string; value: string };
  */
 export default function DashboardPage() {
   const [data, setData] = useState<Datum[]>([]);
+  const [title, setTitle] = useState("");
+  const [value, setValue] = useState("");
+  const [error, setError] = useState("");
   const { data: session, status } = useSession();
   const router = useRouter();
 
@@ -34,8 +35,16 @@ export default function DashboardPage() {
     await signOut({ callbackUrl: "/" });
   };
 
-  const handleAddData = (newData: Datum) => {
-    setData(prev => [...prev, newData]);
+  const handleAddData = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!title.trim() || !value.trim()) {
+      setError("Both fields are required.");
+      return;
+    }
+    setError("");
+    setData(prev => [...prev, { title: title.trim(), value: value.trim() }]);
+    setTitle("");
+    setValue("");
   };
 
   // Show loading while checking authentication
@@ -85,16 +94,60 @@ export default function DashboardPage() {
           <Grid container spacing={4}>
             <Grid item xs={12} md={6}>
               <Typography variant="h6" mb={2}>Add New Data</Typography>
-              <DataInputForm onAdd={handleAddData} />
+              <Paper elevation={1} sx={{ p: 3 }}>
+                <Box component="form" onSubmit={handleAddData} sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                  <Box sx={{ display: 'flex', gap: 2 }}>
+                    <TextField
+                      label="Title"
+                      value={title}
+                      onChange={(e) => {
+                        setTitle(e.target.value);
+                        if (error) setError("");
+                      }}
+                      size="small"
+                      fullWidth
+                    />
+                    <TextField
+                      label="Value"
+                      value={value}
+                      onChange={(e) => {
+                        setValue(e.target.value);
+                        if (error) setError("");
+                      }}
+                      size="small"
+                      fullWidth
+                    />
+                  </Box>
+                  {error && <Alert severity="error">{error}</Alert>}
+                  <Button type="submit" variant="contained" color="success">
+                    Add Data
+                  </Button>
+                </Box>
+              </Paper>
             </Grid>
             
             <Grid item xs={12} md={6}>
-              <Typography variant="h6" mb={2}>Your Dashboard</Typography>
-              <Dashboard 
-                username={userName} 
-                data={data} 
-                onLogout={handleLogout} 
-              />
+              <Typography variant="h6" mb={2}>Your Data</Typography>
+              <Paper elevation={1} sx={{ p: 3 }}>
+                {data.length === 0 ? (
+                  <Typography color="text.secondary">No data added yet.</Typography>
+                ) : (
+                  <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+                    {data.map((item, idx) => (
+                      <Box key={idx} sx={{ 
+                        display: 'flex', 
+                        justifyContent: 'space-between', 
+                        alignItems: 'center',
+                        py: 1,
+                        borderBottom: idx < data.length - 1 ? '1px solid #e0e0e0' : 'none'
+                      }}>
+                        <Typography variant="body2" fontWeight={500}>{item.title}</Typography>
+                        <Typography variant="body2" color="text.secondary">{item.value}</Typography>
+                      </Box>
+                    ))}
+                  </Box>
+                )}
+              </Paper>
             </Grid>
           </Grid>
         </Paper>
